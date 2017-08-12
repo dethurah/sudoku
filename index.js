@@ -251,10 +251,8 @@ function hideRandomCell() { //randomly eraeses a cell, that only has one option.
         
 function removeNumbers() {  //eraeses cells with one options, until no more exist.
     let keepRemoving = true;
-    let numbersRemoved = 0;
     while (keepRemoving) {
         keepRemoving = hideRandomCell();
-        numbersRemoved++;
     }
 }
 
