@@ -67,7 +67,7 @@ function beginTime() {  //starts the timer
         let now = new Date().getTime();
         let diff = Math.round((now - startTime) / 1000);
         let h = diff;
-        let m = diff >= 60 ? (diff >= 70 ? Math.floor(diff / 60) + ":" : "0" + Math.floor(diff / 60) + ":") : "00:";
+        let m = diff >= 60 ? (diff >= 600 ? Math.floor(diff / 60) + ":" : "0" + Math.floor(diff / 60) + ":") : "00:";
         let s = diff % 60 >= 10 ? diff % 60 : "0" + diff % 60;
         elapsedTime = m + s
         document.getElementsByTagName("p")[0].textContent = "time: " + elapsedTime;
