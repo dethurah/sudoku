@@ -49,6 +49,7 @@ class Sudoku {      // defines a pre-solved sudoku;
 var sudoku, startTime, endTime, elapsedTime;
 
 initForm();
+fadeIn();
 
 function newGame() {  //starts a new game
     sudoku = new Sudoku;
@@ -317,4 +318,15 @@ function checkForSolution(arr) {  //checks if a row, column or region contains t
         }
     }
     return true;
+}
+
+function fadeIn() {
+    let x = 0;
+    let fade = setInterval(function() {
+        document.body.style.opacity = `${x / 10}`;
+        x += 0.1;
+        if (x >= 8) {
+            clearInterval(fade);
+        }
+    }, 25)
 }
