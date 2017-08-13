@@ -46,8 +46,7 @@ class Sudoku {      // defines a pre-solved sudoku;
     }
 }
 
-let sudoku = {};
-var startTime, endTime, elapsedTime;
+var sudoku, startTime, endTime, elapsedTime;
 
 initForm();
 
