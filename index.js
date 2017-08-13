@@ -323,8 +323,8 @@ function checkForSolution(arr) {  //checks if a row, column or region contains t
 function fadeIn() {
     let x = 0;
     let fade = setInterval(function() {
-        document.body.style.opacity = `${x / 10}`;
-        x += 0.1;
+        document.body.style.opacity = `${x}`;
+        x += 0.01;
         if (x >= 8) {
             clearInterval(fade);
         }
