@@ -12,7 +12,7 @@ class Sudoku {      // defines a pre-solved sudoku;
             [4, 6, 9, 2, 5, 3, 8, 7, 1]];
 
         this.rows =
-           [[3, 9, 1, 2, 8, 6, 5, 7, 4],
+            [[3, 9, 1, 2, 8, 6, 5, 7, 4],
             [4, 8, 7, 3, 5, 9, 1, 2, 6], 
             [6, 5, 2, 7, 1, 4, 8, 3, 9], 
             [8, 7, 5, 4, 3, 1, 6, 9, 2], 
@@ -23,26 +23,24 @@ class Sudoku {      // defines a pre-solved sudoku;
             [7, 2, 6, 8, 9, 5, 3, 4, 1]];
             
         this.regions =
-           [[[1, 2, 3, 4, 5, 6, 7, 8, 9], 
-            [1, 2, 3, 4, 5, 6, 7, 8, 9], 
-            [1, 2, 3, 4, 5, 6, 7, 8, 9]], 
-            [[1, 2, 3, 4, 5, 6, 7, 8, 9], 
-            [1, 2, 3, 4, 5, 6, 7, 8, 9], 
-            [1, 2, 3, 4, 5, 6, 7, 8, 9]], 
-            [[1, 2, 3, 4, 5, 6, 7, 8, 9], 
-            [1, 2, 3, 4, 5, 6, 7, 8, 9], 
-            [1, 2, 3, 4, 5, 6, 7, 8, 9]]];
+            [[[3, 9, 1, 4, 8, 7, 6, 5, 2], 
+            [8, 7, 5, 2, 1, 3, 9, 6, 4], 
+            [1, 4, 9, 5, 3, 8, 7, 2, 6]], 
+            [[2, 8, 6, 3, 5, 9, 7, 1, 4], 
+            [4, 3, 1, 9, 6, 7, 5, 2, 8], 
+            [6, 7, 3, 1, 4, 2, 8, 9, 5]], 
+            [[5, 7, 4, 1, 2, 6, 8, 3, 9], 
+            [6, 9, 2, 4, 8, 5, 7, 1, 3], 
+            [2, 5, 8, 9, 6, 7, 3, 4, 1]]];
 
-        this.regionIndex =  //an index to be used when dealing with regions.
-           [[0, 1, 2, 0, 1, 2, 0, 1, 2], 
-            [3, 4, 5, 3, 4, 5, 3, 4, 5], 
-            [6, 7, 8, 6, 7, 8, 6, 7, 8], 
-            [0, 1, 2, 0, 1, 2, 0, 1, 2], 
-            [3, 4, 5, 3, 4, 5, 3, 4, 5], 
-            [6, 7, 8, 6, 7, 8, 6, 7, 8], 
-            [0, 1, 2, 0, 1, 2, 0, 1, 2], 
-            [3, 4, 5, 3, 4, 5, 3, 4, 5], 
-            [6, 7, 8, 6, 7, 8, 6, 7, 8]];
+        this.columnOptions = [[], [], [], [], [], [], [], [], []];
+
+        this.rowOptions = [[], [], [], [], [], [], [], [], []];
+
+        this.regionOptions = 
+        [[[], [], []], 
+        [[], [], []], 
+        [[], [], []]];
     }
 }
 
@@ -51,12 +49,24 @@ var sudoku, startTime, endTime, elapsedTime;
 initForm();
 fadeIn();
 
+let regionIndex =
+   [[0, 1, 2, 0, 1, 2, 0, 1, 2], 
+    [3, 4, 5, 3, 4, 5, 3, 4, 5], 
+    [6, 7, 8, 6, 7, 8, 6, 7, 8], 
+    [0, 1, 2, 0, 1, 2, 0, 1, 2], 
+    [3, 4, 5, 3, 4, 5, 3, 4, 5], 
+    [6, 7, 8, 6, 7, 8, 6, 7, 8], 
+    [0, 1, 2, 0, 1, 2, 0, 1, 2], 
+    [3, 4, 5, 3, 4, 5, 3, 4, 5], 
+    [6, 7, 8, 6, 7, 8, 6, 7, 8]];
+
 function newGame() {  //starts a new game
     sudoku = new Sudoku;
     endTime = null;
     initForm();
     shuffleSudoku();
-    removeNumbers();
+    updateOptions();
+    eraseNumbers();
     displaySudoku();
     beginTime();
 }
@@ -65,8 +75,7 @@ function beginTime() {  //starts the timer
     startTime = new Date().getTime();
     let time = setInterval(function() {
         let now = new Date().getTime();
-        let diff = Math.round((now - startTime) / 1000);
-        let h = diff;
+        let diff = Math.round((now - startTime) / 1000); 
         let m = diff >= 60 ? (diff >= 600 ? Math.floor(diff / 60) + ":" : "0" + Math.floor(diff / 60) + ":") : "00:";
         let s = diff % 60 >= 10 ? diff % 60 : "0" + diff % 60;
         elapsedTime = m + s
@@ -95,13 +104,13 @@ function initForm() {   //initializes the sudoku's form element
 function inputNum(num, x, y) {   //inputs a number into the sudoku data.
     sudoku.columns[x][y] = num;
     sudoku.rows[y][x] = num;
-    sudoku.regions[Math.floor(x / 3)][Math.floor(y / 3)][sudoku.regionIndex[y][x]] = num;
+    sudoku.regions[Math.floor(x / 3)][Math.floor(y / 3)][regionIndex[y][x]] = num;
 }
 
-function ereaseNum(x, y) {      //eraeses a number from the sudoku data.
+function eraseNum(x, y) {      //erases a number from the sudoku data.
     sudoku.columns[x][y] = '';
     sudoku.rows[y][x] = '';
-    sudoku.regions[Math.floor(x / 3)][Math.floor(y / 3)][sudoku.regionIndex[y][x]] = '';
+    sudoku.regions[Math.floor(x / 3)][Math.floor(y / 3)][regionIndex[y][x]] = '';
 }
 
 function shuffleSudoku() {      //shuffles the pre-solved sudoku into a new, random sudoku.
@@ -165,19 +174,19 @@ function shuffleSudoku() {      //shuffles the pre-solved sudoku into a new, ran
     sudoku.columns[7] = rowColumns[2][1];
     sudoku.columns[8] = rowColumns[2][2];
 
-    for (let i = 0; i <= 8; i++) {
-        for (let j = 0; j <= 8; j++) {
-            sudoku.rows[j][i] = sudoku.columns[i][j];
+    for (let y = 0; y <= 8; y++) {
+        for (let x = 0; x <= 8; x++) {
+            sudoku.rows[y][x] = sudoku.columns[x][y];
+            sudoku.regions[Math.floor(x / 3)][Math.floor(y / 3)][regionIndex[y][x]] = sudoku.rows[y][x];
         }
     }
-    //regions does not need to be shuffled
 }
 
 function getOptions(x, y) {  //gets all options of numbers, that can be inputted in a specific cell.
             
-    let options = [1, 2, 3, 4, 5, 6, 7, 8, 9]; //start with all options, and remove them if a match is found in the same row, column or region.
+    let options = [1, 2, 3, 4, 5, 6, 7, 8, 9]; //start with all options, and erase them if a match is found in the same row, column or region.
     let currentNum = sudoku.columns[x][y];
-    ereaseNum(x, y);
+    eraseNum(x, y);
 
     //check in column
     for (let i = 0; i <= 8; i++) {
@@ -204,56 +213,100 @@ function getOptions(x, y) {  //gets all options of numbers, that can be inputted
     return options;
 }
 
-function cellsWNums(arr) { //gets all cells, that contain a number.
-    let cells = [];
-    for (let x = 0; x <= 8; x++) {
-        for (let y = 0; y <= 8; y++) {
-            if (arr[x][y]) {
-                cells.push([x, y])
-            }
+function updateOptions() {
+    for (let y = 0; y <= 8; y++) {
+        for (let x = 0; x <= 8; x++) {
+            sudoku.columnOptions[x][y] = getOptions(x, y);
+            sudoku.rowOptions[y][x] = getOptions(x, y);
+            sudoku.regionOptions[Math.floor(x / 3)][Math.floor(y / 3)][regionIndex[y][x]] = getOptions(x, y);
         }
     }
-    return cells;
-}      
-
-function oneOption(x, y) {  //checks if a cell has only one option (if the cell already contains a number, it is first made blank)
-    return getOptions(x, y).length == 1;
 }
 
-function cellsWOption(arr) { //gets all cells, that has only one option.
+function completion() {
             
     let cells = [];
-
-    for (let i = 0; i <= arr.length - 1; i++) {
-        if (oneOption(arr[i][0], arr[i][1])) {
-            cells.push(arr[i]);
+    for (let y = 0; y <= 8; y++) {
+        for (let x = 0; x <= 8; x++) {
+            if (sudoku.rowOptions[y][x].length == 1 && sudoku.rows[y][x]) {
+                cells.push([x, y]);
+            }
         }
     }
     return cells;            
 }
 
-function hideRandomCell() { //randomly eraeses a cell, that only has one option.
+function elimination() {
+    cells = [];
+    for (let y = 0; y <= 8; y++) {
+        for (let x = 0; x <= 8; x++) {
+            if (sudoku.rows[y][x]) {
+                let currentNum = sudoku.rows[y][x];
+                eraseNum(x, y);
+                updateOptions();
+                for (let i = 0; i <= sudoku.rowOptions[y][x].length - 1; i++) {
+                    let rowCount = 0;
+                    let columnCount = 0;
+                    let regionCount = 0;
+                    for (let j = 0; j <= 8; j++) {
+                        if (!sudoku.rows[y][j] && sudoku.rowOptions[y][j].indexOf(sudoku.rowOptions[y][x][i]) >= 0) {
+                            rowCount++;
+                        }
+                    }
+                    for (let j = 0; j <= 8; j++) {
+                        if (!sudoku.columns[x][j] && sudoku.columnOptions[x][j].indexOf(sudoku.rowOptions[y][x][i]) >= 0) {
+                            columnCount++;
+                        }
+                    }
+                    for (let j = 0; j <= 8; j++) {
+                        if (!sudoku.regions[Math.floor(x / 3)][Math.floor(y / 3)][j] && sudoku.regionOptions[Math.floor(x / 3)][Math.floor(y / 3)][j].indexOf(sudoku.rowOptions[y][x][i]) >= 0) {
+                            regionCount++;
+                        }
+                    }
+                    if (rowCount == 1 || columnCount == 1 || regionCount == 1) {
+                        if (cells.indexOf([x, y] < 0)) {
+                            cells.push([x, y]); 
+                        }
+                    }
+                }
+            inputNum(currentNum, x, y);
+            }
+        }
+    }
+    return cells;
+}
+
+function eraseBy(method) { //randomly erases a cell, either by elimination og completion
             
     function randomCell(arr) {
         return arr[Math.floor(Math.random() * arr.length)];
     }
 
-    let chosenCell = randomCell(cellsWOption(cellsWNums(sudoku.columns)));
+    let chosenCell = randomCell(method);
     if (chosenCell) {
-        ereaseNum(chosenCell[0], chosenCell[1]);
+        eraseNum(chosenCell[0], chosenCell[1]);
         document.getElementById(`${chosenCell[0]}, ${chosenCell[1]}`).disabled = false;
         document.getElementById(`${chosenCell[0]}, ${chosenCell[1]}`).className = "blank";
+        updateOptions();
         return true;
     } else {
         return false;
     }
 }
         
-function removeNumbers() {  //eraeses cells with one options, until no more exist.
+function eraseNumbers() {  //erases cells, until no more can be erased
     let keepRemoving = true;
+    let cellsErased = 0;
     while (keepRemoving) {
-        keepRemoving = hideRandomCell();
+        keepRemoving = eraseBy(completion());
+        cellsErased++;
     }
+    keepRemoving = true;
+    while (keepRemoving) {
+        keepRemoving = eraseBy(elimination());
+        cellsErased++;
+    }
+    console.log(cellsErased);
 }
 
 function checkForErrors() { //checks if you have made an error, and if so changes the text color of the errors to red.
@@ -264,7 +317,7 @@ function checkForErrors() { //checks if you have made an error, and if so change
             let currentNum = sudoku.rows[y][x];
             
             if (currentNum !== NaN) {
-                ereaseNum(x, y);
+                eraseNum(x, y);
             if (
                 sudoku.columns[x].indexOf(currentNum) >= 0 ||
                 sudoku.rows[y].indexOf(currentNum) >= 0 ||
@@ -299,6 +352,7 @@ function updateData() {     //updates the Data with input and then checks if an 
     }
     checkForErrors();
     checkIfSolved();
+    updateOptions();
 }
 
 function checkIfSolved() {  //checks whether the sudoku is completed.
