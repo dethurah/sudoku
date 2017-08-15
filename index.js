@@ -134,15 +134,9 @@ function shuffleSudoku() {      //shuffles the pre-solved sudoku into a new, ran
     rowRegions.forEach(row => {row.sort(sortRandom)});  //shuffles the rows within each group.
 
     //updates the row data
-    sudoku.rows[0] = rowRegions[0][0];
-    sudoku.rows[1] = rowRegions[0][1];
-    sudoku.rows[2] = rowRegions[0][2];
-    sudoku.rows[3] = rowRegions[1][0];
-    sudoku.rows[4] = rowRegions[1][1];
-    sudoku.rows[5] = rowRegions[1][2];
-    sudoku.rows[6] = rowRegions[2][0];
-    sudoku.rows[7] = rowRegions[2][1];
-    sudoku.rows[8] = rowRegions[2][2];
+    for (let y = 0; y <= 8; y++) {
+        sudoku.rows[y] = rowRegions[Math.floor(y / 3)][y % 3];
+    }
 
     for (let i = 0; i <= 8; i++) {
         for (let j = 0; j <= 8; j++) {
@@ -164,15 +158,9 @@ function shuffleSudoku() {      //shuffles the pre-solved sudoku into a new, ran
     rowColumns.sort(sortRandom);
     rowColumns.forEach(column => {column.sort(sortRandom)});
 
-    sudoku.columns[0] = rowColumns[0][0];
-    sudoku.columns[1] = rowColumns[0][1];
-    sudoku.columns[2] = rowColumns[0][2];
-    sudoku.columns[3] = rowColumns[1][0];
-    sudoku.columns[4] = rowColumns[1][1];
-    sudoku.columns[5] = rowColumns[1][2];
-    sudoku.columns[6] = rowColumns[2][0];
-    sudoku.columns[7] = rowColumns[2][1];
-    sudoku.columns[8] = rowColumns[2][2];
+    for (let x = 0; x <= 8; x++) {
+        sudoku.columns[x] = rowColumns[Math.floor(x / 3)][x % 3];
+    }
 
     for (let y = 0; y <= 8; y++) {
         for (let x = 0; x <= 8; x++) {
