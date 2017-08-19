@@ -115,7 +115,8 @@ class Sudoku {
 
     newGame() {
         this.stopTimer();
-        document.getElementById("timer").textContent = "00:00setTitle("sudoku")
+        setTitle("sudoko");
+        document.getElementById("timer").textContent = "00:00";
         this.initBoard();
         this.shuffleBoard();
         this.updateOptions();
