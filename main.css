@@ -54,10 +54,6 @@ body {
     border-bottom: 3px solid black;
 }
 
-.board > .row:nth-child(3n) {
-    border-bottom: 3px solid black;
-}
-
 .row > input:nth-child(3n) {
     border-right: 3px solid black;
 }

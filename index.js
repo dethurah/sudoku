@@ -16,6 +16,22 @@ function forXAndY(length, callback) {
     }
 }
 
+function sortRandom() {
+    return Math.floor(Math.random() * 3);
+}
+
+function getRandomCell(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function timeFormatter(str) {
+    return str.length < 2 ? `0${str}` : str;
+}
+
+function setTitle(str) {
+    document.getElementsByTagName("h1")[0].textContent = str;
+}
+
 // defines a sudoku puzzle
 class Sudoku {
     constructor() {
@@ -99,8 +115,7 @@ class Sudoku {
 
     newGame() {
         this.stopTimer();
-        document.getElementById("timer").textContent = "00:00";
-        this.setTitle("sudoku")
+        document.getElementById("timer").textContent = "00:00setTitle("sudoku")
         this.initBoard();
         this.shuffleBoard();
         this.updateOptions();
@@ -119,9 +134,9 @@ class Sudoku {
         ];
     
         // shuffles the three groups of rows
-        rowRegions.sort(this.sortRandom);
+        rowRegions.sort(sortRandom);
         // shuffles the rows within each group
-        rowRegions.forEach(row => row.sort(this.sortRandom));
+        rowRegions.forEach(row => row.sort(sortRandom));
     
         // updates the row data
         this.rows[0] = rowRegions[0][0];
@@ -145,8 +160,8 @@ class Sudoku {
             [this.columns[6], this.columns[7], this.columns[8]]
         ];
     
-        rowColumns.sort(this.sortRandom);
-        rowColumns.forEach(column => column.sort(this.sortRandom));
+        rowColumns.sort(sortRandom);
+        rowColumns.forEach(column => column.sort(sortRandom));
     
         this.columns[0] = rowColumns[0][0];
         this.columns[1] = rowColumns[0][1];
@@ -185,13 +200,11 @@ class Sudoku {
             keepRemoving = this.eraseBy(this.elimination());
             cellsErased++;
         }
-        console.log(cellsErased);
     }
 
     // randomly erases a cell, that only has one option
     eraseBy(method) {
-        let chosenCell = this.getRandomCell(method);
-        // let chosenCell = this.getRandomCell(this.getCellsWithOneOption(this.getCellsWithNumber()));
+        let chosenCell = getRandomCell(method);
         if (chosenCell) {
             this.eraseNumber(chosenCell[0], chosenCell[1]);
             const cell = document.getElementById(`${chosenCell[0]}, ${chosenCell[1]}`)
@@ -298,8 +311,8 @@ class Sudoku {
 
     // updates the timer in the view
     drawTimer(diff) {
-        const m = this.timeFormatter(`${diff.getMinutes()}`);
-        const s = this.timeFormatter(`${diff.getSeconds()}`);
+        const m = timeFormatter(`${diff.getMinutes()}`);
+        const s = timeFormatter(`${diff.getSeconds()}`);
         this.elapsedTime = `${m}:${s}`
         document.getElementById("timer").textContent = this.elapsedTime;
     }
@@ -354,7 +367,7 @@ class Sudoku {
 
         if (this.isSolved()) {
             this.stopTimer();
-            this.setTitle(`Congratulations!`);
+            setTitle(`Congratulations!`);
         }
         this.updateOptions();
     }
@@ -367,25 +380,9 @@ class Sudoku {
             this.regions.every(arr => arr.every(this.checkForSolution))
     }
 
-    // checks if a row, column or region contains the numbers 1-9
+    // checks if the sum of a row, column or region is 45
     checkForSolution(arr) {
         return arr.reduce((prev, curr) => prev + curr) === 45;
-    }
-
-    sortRandom() {
-        return Math.floor(Math.random() * 3);
-    }
-
-    getRandomCell(arr) {
-        return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    timeFormatter(str) {
-        return str.length < 2 ? `0${str}` : str;
-    }
-
-    setTitle(str) {
-        document.getElementsByTagName("h1")[0].textContent = str;
     }
 }
 
