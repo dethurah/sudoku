@@ -1,55 +1,72 @@
 body {
     background-image: url("japan-2438358_1920.jpg");
     background-position: center;
-    opacity: 0.8;
+    transition: opacity 1.5s ease-in;
+    opacity: 0;
 }
 
 .sudoku {
-    margin: auto;
-    margin-top: 5%;
-    width: 50%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 75px;
     font-family: sans-serif;
     font-size: 20px;
     text-align: center;
 }
 
-#newgame {
-    display: block;
-    margin: auto;
+.sudoku > h1 {
+    text-transform: uppercase;
+}
+
+.options {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 396px;
+    align-self: center;
+    margin-bottom: 15px
+}
+
+.button {
     padding: 10px;
     width: 135px;
-    margin-top: 15px;
     background-color: white;
     border: 3px solid black;
     font-size: 15px;
 }
 
-table {
+.board {
     border: 3px solid black;
     border-collapse: collapse;
-    margin: auto;
+    display: flex;
+    align-self: center;
+    flex-flow: row wrap;
+    height: 402px;
+    width: 400px;
 }
 
-th, td {
-    border: 1px solid black;
-    width: 40px;
-    height: 40px;
+.row {
+    display: flex;
 }
 
-.splitRight {
-    border-right: 3px solid black;
-}
-
-.splitBottom {
+.board > .row:nth-child(3n) {
     border-bottom: 3px solid black;
 }
 
-[name = cell] {
-    background: white;
+.board > .row:nth-child(3n) {
+    border-bottom: 3px solid black;
+}
+
+.row > input:nth-child(3n) {
+    border-right: 3px solid black;
+}
+
+input {
+    border: 1px solid black;
     width: 40px;
     height: 40px;
-    padding: 0px;
-    border: none;
+    background: white;
     font-family: sans-serif;
     font-size: 20px;
     text-align: center;
