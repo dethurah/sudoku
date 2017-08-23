@@ -50,24 +50,26 @@ body {
     display: flex;
 }
 
-/*.board > .row:nth-child(3n) {
-    border-bottom: 3px solid black;
-}
-
-.row > input:nth-child(3n) {
-    border-right: 3px solid black;
-}*/
-
 input {
     border: 1px solid grey;
+    border-right: none;
+    border-bottom: none;
     width: 40px;
     height: 40px;
     background: white;
     font-family: sans-serif;
     font-size: 20px;
     text-align: center;
-
 }
+
+.board > .row:nth-child(9n) > input {
+    border-bottom: 1px solid grey;
+}
+
+.row > input:nth-child(9n) {
+    border-right: 1px solid grey;
+}
+
 
 .clue {
     color: black;
