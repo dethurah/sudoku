@@ -32,6 +32,21 @@ function setTitle(str) {
     document.getElementsByTagName("h1")[0].textContent = str;
 }
 
+function initForm() {
+    const cells = document.getElementsByName("cell");
+    let i = 0;
+    forXAndY(8, (x, y) => {
+        cells[i].id = `${x}, ${y}`;
+        i++;
+    });
+
+    cells.forEach(cell => {
+        cell.className = "clue";
+        cell.maxLength = 1;
+        cell.disabled = true;
+    });
+}
+
 // defines a sudoku puzzle
 class Sudoku {
     constructor() {
@@ -99,16 +114,11 @@ class Sudoku {
         this.columnOptions = [[], [], [], [], [], [], [], [], []];
         this.rowOptions = [[], [], [], [], [], [], [], [], []];
         this.regionOptions = [[[], [], []], [[], [], []], [[], [], []]];
-
-        cells.forEach(cell => {
-            cell.className = "clue";
-            cell.maxLength = 1;
-            cell.disabled = true;
-        });
     }
 
     newGame() {
         this.stopTimer();
+        initForm();
         setTitle("sudoku");
         document.getElementById("timer").textContent = "00:00";
         this.initBoard();
@@ -381,11 +391,5 @@ class Sudoku {
     }
 }
 
-const cells = document.getElementsByName("cell");
-let i = 0;
-forXAndY(8, (x, y) => {
-    cells[i].id = `${x}, ${y}`;
-    i++;
-});
-
+initForm();
 const sudoku = new Sudoku();
