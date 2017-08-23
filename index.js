@@ -100,12 +100,6 @@ class Sudoku {
         this.rowOptions = [[], [], [], [], [], [], [], [], []];
         this.regionOptions = [[[], [], []], [[], [], []], [[], [], []]];
 
-        const cells = document.getElementsByName("cell");
-        let i = 0;
-        forXAndY(8, (x, y) => {
-            cells[i].id = `${x}, ${y}`;
-            i++;
-        });
         cells.forEach(cell => {
             cell.className = "clue";
             cell.maxLength = 1;
@@ -115,12 +109,12 @@ class Sudoku {
 
     newGame() {
         this.stopTimer();
-        setTitle("sudoko");
+        setTitle("sudoku");
         document.getElementById("timer").textContent = "00:00";
         this.initBoard();
         this.shuffleBoard();
         this.updateOptions();
-        this.removeNumbers();
+        this.eraseNumbers();
         this.drawSudoku();
         this.beginTimer();
     }
@@ -189,7 +183,7 @@ class Sudoku {
     }
 
     // erases cells with one options, until no more exist
-    removeNumbers() {
+    eraseNumbers() {
         let keepRemoving = true;
         let cellsErased = 0;
         while (keepRemoving) {
@@ -386,5 +380,12 @@ class Sudoku {
         return arr.reduce((prev, curr) => prev + curr) === 45;
     }
 }
+
+const cells = document.getElementsByName("cell");
+let i = 0;
+forXAndY(8, (x, y) => {
+    cells[i].id = `${x}, ${y}`;
+    i++;
+});
 
 const sudoku = new Sudoku();
