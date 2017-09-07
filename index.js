@@ -1,3 +1,7 @@
+let rows, columns, regions, timer;
+
+initForm();
+
 // utility functions
 function validateInput(event) {
     const regex = /[1-9]/;
@@ -7,29 +11,12 @@ function validateInput(event) {
     }
 }
 
-
 function forXAndY(length, callback) {
     for (let y = 0; y <= length; y++) {
         for (let x = 0; x <= length; x++) {
             callback(x, y);
         }
     }
-}
-
-function sortRandom() {
-    return Math.floor(Math.random() * 3);
-}
-
-function getRandomCell(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
-}
-
-function timeFormatter(str) {
-    return str.length < 2 ? `0${str}` : str;
-}
-
-function setTitle(str) {
-    document.getElementsByTagName("h1")[0].textContent = str;
 }
 
 function initForm() {
@@ -47,349 +34,376 @@ function initForm() {
     });
 }
 
-// defines a sudoku puzzle
-class Sudoku {
-    constructor() {
-        this.timer = null;
-        this.elapsedTime = "";
+function getColumns(rows) {
 
-        this.regions = [
-            [
-                [1, 2, 3, 4, 5, 6, 7, 8, 9],
-                [1, 2, 3, 4, 5, 6, 7, 8, 9],
-                [1, 2, 3, 4, 5, 6, 7, 8, 9]
-            ],
-            [
-                [1, 2, 3, 4, 5, 6, 7, 8, 9],
-                [1, 2, 3, 4, 5, 6, 7, 8, 9],
-                [1, 2, 3, 4, 5, 6, 7, 8, 9]
-            ],
-            [
-                [1, 2, 3, 4, 5, 6, 7, 8, 9],
-                [1, 2, 3, 4, 5, 6, 7, 8, 9],
-                [1, 2, 3, 4, 5, 6, 7, 8, 9]
-            ]
-        ];
+    let columns = [];
 
-        // an index to be used when dealing with regions
-        this.regionIndex = [
-            [0, 1, 2, 0, 1, 2, 0, 1, 2], 
-            [3, 4, 5, 3, 4, 5, 3, 4, 5], 
-            [6, 7, 8, 6, 7, 8, 6, 7, 8], 
-            [0, 1, 2, 0, 1, 2, 0, 1, 2], 
-            [3, 4, 5, 3, 4, 5, 3, 4, 5], 
-            [6, 7, 8, 6, 7, 8, 6, 7, 8], 
-            [0, 1, 2, 0, 1, 2, 0, 1, 2], 
-            [3, 4, 5, 3, 4, 5, 3, 4, 5], 
-            [6, 7, 8, 6, 7, 8, 6, 7, 8]
-        ];
-    }
-
-    // initializes the sudoku
-    initBoard() {
-        this.columns = [
-            [3, 4, 6, 8, 2, 9, 1, 5, 7], 
-            [9, 8, 5, 7, 1, 6, 4, 3, 2], 
-            [1, 7, 2, 5, 3, 4, 9, 8, 6], 
-            [2, 3, 7, 4, 9, 5, 6, 1, 8], 
-            [8, 5, 1, 3, 6, 2, 7, 4, 9], 
-            [6, 9, 4, 1, 7, 8, 3, 2, 5], 
-            [5, 1, 8, 6, 4, 7, 2, 9, 3], 
-            [7, 2, 3, 9, 8, 1, 5, 6, 4], 
-            [4, 6, 9, 2, 5, 3, 8, 7, 1]
-        ];
-
-        this.rows = [
-            [3, 9, 1, 2, 8, 6, 5, 7, 4],
-            [4, 8, 7, 3, 5, 9, 1, 2, 6], 
-            [6, 5, 2, 7, 1, 4, 8, 3, 9], 
-            [8, 7, 5, 4, 3, 1, 6, 9, 2], 
-            [2, 1, 3, 9, 6, 7, 4, 8, 5], 
-            [9, 6, 4, 5, 2, 8, 7, 1, 3], 
-            [1, 4, 9, 6, 7, 3, 2, 5, 8], 
-            [5, 3, 8, 1, 4, 2, 9, 6, 7], 
-            [7, 2, 6, 8, 9, 5, 3, 4, 1]
-        ];
-
-        this.columnOptions = [[], [], [], [], [], [], [], [], []];
-        this.rowOptions = [[], [], [], [], [], [], [], [], []];
-        this.regionOptions = [[[], [], []], [[], [], []], [[], [], []]];
-    }
-
-    newGame() {
-        this.stopTimer();
-        initForm();
-        setTitle("sudoku");
-        document.getElementById("timer").textContent = "00:00";
-        this.initBoard();
-        this.shuffleBoard();
-        this.updateOptions();
-        this.eraseNumbers();
-        this.drawSudoku();
-        this.beginTimer();
-    }
-
-    // shuffles the pre-solved sudoku into a new, random sudoku
-    shuffleBoard() {
-        // gets three groups of rows: The top three, middle three and bottom three
-        let rowRegions = [
-            [this.rows[0], this.rows[1], this.rows[2]],
-            [this.rows[3], this.rows[4], this.rows[5]],
-            [this.rows[6], this.rows[7], this.rows[8]]
-        ];
-    
-        // shuffles the three groups of rows
-        rowRegions.sort(sortRandom);
-        // shuffles the rows within each group
-        rowRegions.forEach(row => row.sort(sortRandom));
-    
-        // updates the row data
-        this.rows[0] = rowRegions[0][0];
-        this.rows[1] = rowRegions[0][1];
-        this.rows[2] = rowRegions[0][2];
-        this.rows[3] = rowRegions[1][0];
-        this.rows[4] = rowRegions[1][1];
-        this.rows[5] = rowRegions[1][2];
-        this.rows[6] = rowRegions[2][0];
-        this.rows[7] = rowRegions[2][1];
-        this.rows[8] = rowRegions[2][2];
-    
-        forXAndY(8, (i, j) => {
-            this.columns[j][i] = this.rows[i][j];
-        });
-    
-        // does the same as above for the columns
-        let rowColumns = [
-            [this.columns[0], this.columns[1], this.columns[2]],
-            [this.columns[3], this.columns[4], this.columns[5]],
-            [this.columns[6], this.columns[7], this.columns[8]]
-        ];
-    
-        rowColumns.sort(sortRandom);
-        rowColumns.forEach(column => column.sort(sortRandom));
-    
-        this.columns[0] = rowColumns[0][0];
-        this.columns[1] = rowColumns[0][1];
-        this.columns[2] = rowColumns[0][2];
-        this.columns[3] = rowColumns[1][0];
-        this.columns[4] = rowColumns[1][1];
-        this.columns[5] = rowColumns[1][2];
-        this.columns[6] = rowColumns[2][0];
-        this.columns[7] = rowColumns[2][1];
-        this.columns[8] = rowColumns[2][2];
-    
-        forXAndY(8, (x, y) => {
-            this.rows[y][x] = this.columns[x][y];
-            this.regions[Math.floor(x / 3)][Math.floor(y / 3)][this.regionIndex[y][x]] = this.rows[y][x];
-        });
-    }
-
-    updateOptions() {
-        forXAndY(8, (x, y) => {
-            this.columnOptions[x][y] = this.getOptions(x, y);
-            this.rowOptions[y][x] = this.getOptions(x, y);
-            this.regionOptions[Math.floor(x / 3)][Math.floor(y / 3)][this.regionIndex[y][x]] = this.getOptions(x, y);
-        });
-    }
-
-    // erases cells with one options, until no more exist
-    eraseNumbers() {
-        let keepRemoving = true;
-        let cellsErased = 0;
-        while (keepRemoving) {
-            keepRemoving = this.eraseBy(this.completion());
-            cellsErased++;
-        }
-        keepRemoving = true;
-        while (keepRemoving) {
-            keepRemoving = this.eraseBy(this.elimination());
-            cellsErased++;
+    for (let x = 0; x <= 8; x++) {
+        columns.push([]);
+        for (let y = 0; y <= 8; y++) {
+            columns[x].push(rows[y][x]);
         }
     }
 
-    // randomly erases a cell, that only has one option
-    eraseBy(method) {
-        let chosenCell = getRandomCell(method);
-        if (chosenCell) {
-            this.eraseNumber(chosenCell[0], chosenCell[1]);
-            const cell = document.getElementById(`${chosenCell[0]}, ${chosenCell[1]}`)
-            cell.disabled = false;
-            cell.className = "blank";
-            this.updateOptions();
-            return true;
-        } else {
-            return false;
-        }
+    return columns;
+}
+
+let regionIndex = [
+    [0, 1, 2, 0, 1, 2, 0, 1, 2], 
+    [3, 4, 5, 3, 4, 5, 3, 4, 5], 
+    [6, 7, 8, 6, 7, 8, 6, 7, 8], 
+    [0, 1, 2, 0, 1, 2, 0, 1, 2], 
+    [3, 4, 5, 3, 4, 5, 3, 4, 5], 
+    [6, 7, 8, 6, 7, 8, 6, 7, 8], 
+    [0, 1, 2, 0, 1, 2, 0, 1, 2], 
+    [3, 4, 5, 3, 4, 5, 3, 4, 5], 
+    [6, 7, 8, 6, 7, 8, 6, 7, 8]
+];
+
+function getRegions(rows) {
+
+    let array = [
+        [
+            [],
+            [],
+            []
+        ],
+        [
+            [],
+            [],
+            []
+        ],
+        [
+            [],
+            [],
+            []
+        ]
+    ];
+
+    forXAndY(8, (x, y) => {
+        array[Math.floor(x / 3)][Math.floor(y / 3)][regionIndex[y][x]] = rows[x][y];
+    })
+
+    return array;
+}
+
+function shuffle(array) {
+    let currentIndex = array.length, temporaryValue, randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
     }
 
-    completion() {
-        let cells = [];
+    return array;
+}
+
+function chooseBoard(difficulty) {
+
+    boardsClone = JSON.parse(JSON.stringify(boards));
+    let board = shuffle(boardsClone[difficulty])[0];
+    
+    return board;
+}
+
+function assignNumbers(board) {
+
+    let variables = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'];
+    let integers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    shuffle(integers);
+
+    let assignment = {
+        x: ''
+    };
+
+    variables.forEach((variable, i) => {
+        assignment[variable] = integers[i];
+    });
+
+    forXAndY(8, (x, y) => {
+        board[x][y] = assignment[board[x][y]];
+    });
+    
+    return board;
+}
+
+function shuffleBoard(board) {
+
+    //let board = array;
+
+    // shuffles three groups of rows: The top three, middle three and bottom three
+    let rowRegions = shuffle([
+        shuffle([board[0], board[1], board[2]]),
+        shuffle([board[3], board[4], board[5]]),
+        shuffle([board[6], board[7], board[8]])
+    ]);
+
+    board[0] = rowRegions[0][0];
+    board[1] = rowRegions[0][1];
+    board[2] = rowRegions[0][2];
+    board[3] = rowRegions[1][0];
+    board[4] = rowRegions[1][1];
+    board[5] = rowRegions[1][2];
+    board[6] = rowRegions[2][0];
+    board[7] = rowRegions[2][1];
+    board[8] = rowRegions[2][2];
+
+    let columns = getColumns(board);
+
+    let rowColumns = shuffle([
+        shuffle([columns[0], columns[1], columns[2]]),
+        shuffle([columns[3], columns[4], columns[5]]),
+        shuffle([columns[6], columns[7], columns[8]])
+    ]);
+
+    columns[0] = rowColumns[0][0];
+    columns[1] = rowColumns[0][1];
+    columns[2] = rowColumns[0][2];
+    columns[3] = rowColumns[1][0];
+    columns[4] = rowColumns[1][1];
+    columns[5] = rowColumns[1][2];
+    columns[6] = rowColumns[2][0];
+    columns[7] = rowColumns[2][1];
+    columns[8] = rowColumns[2][2];
+
+    if (Math.random() < 0.5) {
         forXAndY(8, (x, y) => {
-            if (this.rowOptions[y][x].length == 1 && this.rows[y][x]) {
-                cells.push([x, y]);
-            }
+            board[y][x] = columns[x][y];
         });
-        return cells;
+    } else {
+        board = columns;
     }
 
-    elimination() {
-        let cells = [];
-        forXAndY(8, (x, y) => {
-            if (this.rows[y][x]) {
-                let currentNum = this.rows[y][x];
-                this.eraseNumber(x, y);
-                this.updateOptions();
-                for (let i = 0; i <= this.rowOptions[y][x].length - 1; i++) {
-                    let rowCount = 0;
-                    let columnCount = 0;
-                    let regionCount = 0;
-                    for (let j = 0; j <= 8; j++) {
-                        if (!this.rows[y][j] && this.rowOptions[y][j].indexOf(this.rowOptions[y][x][i]) >= 0) {
-                            rowCount++;
-                        }
-                        if (!this.columns[x][j] && this.columnOptions[x][j].indexOf(this.rowOptions[y][x][i]) >= 0) {
-                            columnCount++;
-                        }
-                        if (!this.regions[Math.floor(x / 3)][Math.floor(y / 3)][j] &&
-                            this.regionOptions[Math.floor(x / 3)][Math.floor(y / 3)][j].indexOf(this.rowOptions[y][x][i]) >= 0) {
-                            regionCount++;
-                        }
-                    }
-                    if (rowCount == 1 || columnCount == 1 || regionCount == 1) {
-                        if (cells.indexOf([x, y] < 0)) {
-                            cells.push([x, y]); 
-                        }
-                    }
-                }
-            this.inputNumber(currentNum, x, y);
-            }
-        });
-        return cells;
-    }
+    return board;
+}
 
-    // erases a number from the sudoku data
-    eraseNumber(x, y) {
-        this.columns[x][y] = '';
-        this.rows[y][x] = '';
-        this.regions[Math.floor(x / 3)][Math.floor(y / 3)][this.regionIndex[y][x]] = '';
-    }
+function drawSudoku() {
+    forXAndY(8, (x, y) => {
+        document.getElementById(`${x}, ${y}`).value = rows[x][y];
+    });
+}
 
-    // gets all options of numbers, that can be inputted in a specific cell
-    getOptions(x, y) {
-        // start with all options, and remove them if a match is found in the same row, column or region.
-        const options = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-        const currentNum = this.columns[x][y];
-        this.eraseNumber(x, y);
-
-        for (let i = 0; i <= 8; i++) {
-            // check in column
-            if (this.columns[x][i] && options.indexOf(this.columns[x][i]) >= 0) {
-                options.splice(options.indexOf(this.columns[x][i]), 1);
-            }
-            // check in row
-            if (this.rows[y][i] && options.indexOf(this.rows[y][i]) >= 0) {
-                options.splice(options.indexOf(this.rows[y][i]), 1);
-            }
-            // check in region
-            if (this.regions[Math.floor(x / 3)][Math.floor(y / 3)][i] && options.indexOf(this.regions[Math.floor(x / 3)][Math.floor(y / 3)][i]) >= 0) {
-                options.splice(options.indexOf(this.regions[Math.floor(x / 3)][Math.floor(y / 3)][i]), 1);
-            }
+function makeBlanks() {
+    forXAndY(8, (x, y) => {
+        if (rows[x][y] === "") {
+            document.getElementById(`${x}, ${y}`).disabled = false;
+            document.getElementById(`${x}, ${y}`).className = "blank";
         }
+    })
+}
 
-        this.inputNumber(currentNum, x, y);
-        return options;
-    }
+function newGame() {
+    
+    stopTimer();
+    initForm();
+    setTitle("sudoku");
+    document.getElementById("timer").textContent = "00:00";
+    rows = chooseBoard(document.getElementById("difficulty").value);
+    assignNumbers(rows);
+    shuffleBoard(rows);
+    columns = getColumns(rows);
+    regions = getRegions(rows);
+    drawSudoku();
+    makeBlanks();
+    beginTimer();
+}
 
-    // inputs a number into the sudoku data
-    inputNumber(num, x, y) {
-        this.columns[x][y] = num;
-        this.rows[y][x] = num;
-        this.regions[Math.floor(x / 3)][Math.floor(y / 3)][this.regionIndex[y][x]] = num;
-    }
+function timeFormatter(str) {
+    return str.length < 2 ? `0${str}` : str;
+}
 
-    // displays the sudoku data
-    drawSudoku() {
-        forXAndY(8, (x, y) => {
-            document.getElementById(`${x}, ${y}`).value = this.columns[x][y];
-        });
-    }
+function drawTimer(diff) {
+    const m = timeFormatter(`${diff.getMinutes()}`);
+    const s = timeFormatter(`${diff.getSeconds()}`);
+    this.elapsedTime = `${m}:${s}`
+    document.getElementById("timer").textContent = this.elapsedTime;
+}
 
-    // updates the timer in the view
-    drawTimer(diff) {
-        const m = timeFormatter(`${diff.getMinutes()}`);
-        const s = timeFormatter(`${diff.getSeconds()}`);
-        this.elapsedTime = `${m}:${s}`
-        document.getElementById("timer").textContent = this.elapsedTime;
-    }
+function beginTimer() {
+    const startTime = new Date();
+    this.timer = setInterval(() => {
+        const diff = new Date(new Date() - startTime);
+        this.drawTimer(diff);
+    }, 1000)
+}
 
-    // starts the timer
-    beginTimer() {
-        const startTime = new Date();
-        this.timer = setInterval(() => {
-            const diff = new Date(new Date() - startTime);
-            this.drawTimer(diff);
-        }, 1000)
-    }
-
-    // stops the timer
-    stopTimer() {
-        if (this.timer) {
-            clearInterval(this.timer);
-        }
-    }
-
-    // checks if you have made an error,
-    // and if so changes the text color of the errors to red
-    checkForErrors() {
-        forXAndY(8, (x, y) => {
-            const currentNum = this.rows[y][x];
-            const currentCell = document.getElementById(`${x}, ${y}`);
-            
-            if (currentNum !== NaN) {
-                this.eraseNumber(x, y);
-                if (this.columns[x].indexOf(currentNum) >= 0 ||
-                    this.rows[y].indexOf(currentNum) >= 0 ||
-                    this.regions[Math.floor(x / 3)][Math.floor(y / 3)].indexOf(currentNum) >= 0) {
-                    this.inputNumber(currentNum, x, y);
-                    currentCell.className = "error";
-                }
-                else if (currentCell.disabled) {
-                    currentCell.className = "clue";
-                }
-                else {
-                    currentCell.className = "blank";
-                }
-            }
-            this.inputNumber(currentNum, x, y);
-        })
-    }
-
-    // updates the data with input and then checks if an error is made, or if the sudoku is completed.
-    updateData() {
-        forXAndY(8, (x, y) => {
-            this.inputNumber(parseInt(document.getElementById(`${x}, ${y}`).value), x, y);
-        });
-
-        if (this.isSolved()) {
-            this.stopTimer();
-            setTitle(`Congratulations!`);
-        }
-        this.updateOptions();
-    }
-
-    // checks whether the sudoku is completed
-    isSolved() {
-        this.checkForErrors();
-        return this.rows.every(this.checkForSolution) &&
-            this.columns.every(this.checkForSolution) &&
-            this.regions.every(arr => arr.every(this.checkForSolution))
-    }
-
-    // checks if the sum of a row, column or region is 45
-    checkForSolution(arr) {
-        return arr.reduce((prev, curr) => prev + curr) === 45;
+function stopTimer() {
+    if (this.timer) {
+        clearInterval(this.timer);
     }
 }
 
-initForm();
-const sudoku = new Sudoku();
+function setTitle(str) {
+    document.getElementsByTagName("h1")[0].textContent = str;
+}
+
+function inputNumber(num, x, y) {
+    columns[x][y] = num;
+    rows[y][x] = num;
+    regions[Math.floor(x / 3)][Math.floor(y / 3)][regionIndex[y][x]] = num;
+}
+
+function eraseNumber(x, y) {
+    columns[x][y] = '';
+    rows[y][x] = '';
+    regions[Math.floor(x / 3)][Math.floor(y / 3)][regionIndex[y][x]] = '';
+}
+
+
+function checkForErrors() {
+    forXAndY(8, (x, y) => {
+        const currentNum = rows[y][x];
+        const currentCell = document.getElementById(`${x}, ${y}`);
+        
+        if (currentNum !== NaN) {
+            eraseNumber(x, y);
+            if (columns[x].indexOf(currentNum) >= 0 ||
+                rows[y].indexOf(currentNum) >= 0 ||
+                regions[Math.floor(x / 3)][Math.floor(y / 3)].indexOf(currentNum) >= 0) {
+                inputNumber(currentNum, x, y);
+                currentCell.className = "error";
+            }
+            else if (currentCell.disabled) {
+                currentCell.className = "clue";
+            }
+            else {
+                currentCell.className = "blank";
+            }
+        }
+        inputNumber(currentNum, x, y);
+    })
+}
+
+function isSolved() {
+    checkForErrors();
+    return rows.every(checkForSolution) &&
+        columns.every(checkForSolution) &&
+        regions.every(arr => arr.every(checkForSolution))
+}
+
+// checks if the sum of a row, column or region is 45
+function checkForSolution(arr) {
+    return arr.reduce((prev, curr) => prev + curr) === 45;
+}
+
+function updateSudoku() {
+
+    forXAndY(8, (x, y) => {
+        inputNumber(parseInt(document.getElementById(`${x}, ${y}`).value), x, y);
+    });
+
+    checkForErrors();
+
+    if (this.isSolved()) {
+        this.stopTimer();
+        setTitle(`Congratulations!`);
+    }
+}
+
+//Database of boards
+const boards = {
+    easy: [
+        [
+            ['f', 'x', 'x', 'g', 'x', 'i', 'x', 'h', 'x'],
+            ['x', 'x', 'x', 'x', 'x', 'x', 'a', 'g', 'x'],
+            ['x', 'e', 'd', 'x', 'b', 'x', 'i', 'x', 'x'],
+            ['x', 'x', 'x', 'x', 'i', 'x', 'c', 'x', 'x'],
+            ['x', 'h', 'x', 'c', 'e', 'd', 'x', 'x', 'a'],
+            ['i', 'x', 'e', 'h', 'f', 'x', 'x', 'x', 'x'],
+            ['d', 'x', 'a', 'x', 'x', 'c', 'b', 'f', 'x'],
+            ['e', 'x', 'x', 'd', 'g', 'x', 'g', 'a', 'c'],
+            ['x', 'b', 'c', 'e', 'x', 'x', 'g', 'x', 'i']
+        ],
+        [
+            ['e', 'b', 'x', 'x', 'x', 'a', 'x', 'i', 'x'],
+            ['x', 'x', 'f', 'g', 'x', 'b', 'a', 'x', 'h'],
+            ['d', 'g', 'x', 'x', 'c', 'x', 'e', 'b', 'x'],
+            ['a', 'd', 'x', 'x', 'h', 'x', 'c', 'x', 'x'],
+            ['i', 'x', 'c', 'f', 'x', 'x', 'x', 'x', 'x'],
+            ['b', 'x', 'x', 'a', 'x', 'c', 'x', 'x', 'x'],
+            ['h', 'a', 'i', 'b', 'x', 'x', 'x', 'x', 'x'],
+            ['x', 'e', 'x', 'c', 'a', 'd', 'i', 'x', 'x'],
+            ['x', 'c', 'd', 'x', 'x', 'f', 'x', 'e', 'x'],
+        ]
+    ],
+    medium: [
+        [
+            ['f', 'x', 'x', 'd', 'c', 'a', 'i', 'x', 'g'],
+            ['e', 'x', 'x', 'f', 'x', 'i', 'a', 'b', 'x'],
+            ['x', 'x', 'd', 'x', 'x', 'x', 'x', 'x', 'x'],
+            ['g', 'x', 'x', 'x', 'x', 'x', 'h', 'x', 'x'],
+            ['c', 'x', 'a', 'x' ,'e', 'h', 'g', 'x', 'x'],
+            ['h', 'x', 'x', 'x', 'd', 'x', 'x', 'a', 'e'],
+            ['i', 'x', 'f', 'g', 'x', 'x', 'x', 'x', 'x'],
+            ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'c', 'i'],
+            ['x', 'x', 'x', 'i', 'x', 'e', 'f', 'x', 'b']
+        ],
+        [
+            ['b', 'x', 'd', 'x', 'i', 'f', 'x', 'c', 'x'],
+            ['a', 'x', 'x', 'x', 'x', 'x', 'b', 'd', 'f'],
+            ['x', 'x', 'x', 'x', 'x', 'x', 'a', 'x', 'x'],
+            ['g', 'x', 'x', 'f', 'x', 'x', 'x', 'x', 'x'],
+            ['x', 'x', 'f', 'x', 'x', 'x', 'i', 'g', 'x'],
+            ['i', 'x', 'x', 'd', 'g', 'b', 'x', 'x', 'c'],
+            ['x', 'c', 'x', 'x', 'd', 'a', 'x', 'x', 'g'],
+            ['x', 'b', 'x', 'g', 'x', 'x', 'x', 'e', 'x'],
+            ['f', 'g', 'x', 'x', 'h', 'e', 'x', 'a', 'x'],
+        ]
+    ],
+    hard: [
+        [
+            ['c', 'x', 'x', 'x', 'x', 'x', 'x', 'i', 'x'],
+            ['x', 'd', 'e', 'x', 'i', 'x', 'x', 'h', 'x'],
+            ['g', 'x', 'x', 'h', 'x', 'x', 'x', 'x', 'x'],
+            ['x', 'x', 'b', 'x', 'x', 'x', 'g', 'x', 'x'],
+            ['x', 'g', 'x', 'x', 'd', 'x', 'x', 'x', 'x'],
+            ['h', 'x', 'x', 'g', 'x', 'x', 'c', 'x', 'x'],
+            ['x', 'i', 'x', 'f', 'x', 'e', 'x', 'x', 'x'],
+            ['x', 'x', 'x', 'x', 'x', 'd', 'x', 'x', 'x'],
+            ['b', 'e', 'f', 'i', 'h', 'x', 'd', 'c', 'x']
+        ],
+        [
+            ['h', 'x', 'x', 'x', 'x', 'x', 'f', 'x', 'x'],
+            ['g', 'b', 'f', 'i', 'x', 'x', 'a', 'e', 'x'],
+            ['i', 'x', 'a', 'x', 'x', 'x', 'h', 'b', 'g'],
+            ['a', 'x', 'x', 'x', 'b', 'x', 'x', 'x', 'f'],
+            ['x', 'x', 'x', 'x', 'c', 'x', 'x', 'x', 'x'],
+            ['e', 'x', 'b', 'f', 'x', 'a', 'g', 'x', 'x'],
+            ['x', 'x', 'x', 'e', 'x', 'x', 'x', 'a', 'x'],
+            ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+            ['x', 'x', 'x', 'b', 'a', 'h', 'i', 'x', 'x'],
+        ]
+    ],
+    expert: [
+        [
+            ['d', 'x', 'x', 'x', 'x', 'x', 'g', 'x', 'x'],
+            ['x', 'a', 'x', 'x', 'x', 'x', 'x', 'x', 'h'],
+            ['x', 'x', 'x', 'x', 'h', 'b', 'x', 'c', 'a'],
+            ['x', 'f', 'x', 'x', 'x', 'x', 'x', 'a', 'x'],
+            ['x', 'x', 'c', 'd', 'x', 'g', 'x', 'x', 'x'],
+            ['x', 'x', 'x', 'a', 'x', 'x', 'f', 'x', 'x'],
+            ['x', 'i', 'x', 'b', 'x', 'x', 'x', 'x', 'x'],
+            ['x', 'd', 'x', 'g', 'x', 'x', 'x', 'h', 'x'],
+            ['x', 'x', 'b', 'x', 'x', 'x', 'c', 'g', 'f']
+        ],
+        [
+            ['x', 'x', 'c', 'a', 'x', 'x', 'd', 'x', 'x'],
+            ['x', 'e', 'x', 'x', 'c', 'x', 'x', 'x', 'x'],
+            ['h', 'x', 'x', 'x', 'x', 'x', 'x', 'c', 'a'],
+            ['i', 'a', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+            ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'd', 'h'],
+            ['f', 'x', 'x', 'g', 'a', 'x', 'x', 'x', 'x'],
+            ['x', 'x', 'd', 'x', 'x', 'g', 'x', 'h', 'x'],
+            ['x', 'x', 'x', 'x', 'x', 'x', 'f', 'x', 'g'],
+            ['x', 'g', 'x', 'f', 'x', 'e', 'x', 'x', 'x']
+        ]
+    ]
+};

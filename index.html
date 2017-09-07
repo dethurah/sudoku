@@ -9,10 +9,16 @@
     <div class="sudoku">
         <h1>sudoku</h1>
         <div class="options">
-            <button class="button" type="button" onclick="sudoku.newGame()">new game</button>
-            <div>time: <span id="timer">00:00</span></div>
+            <button class="button" type="button" onclick="newGame()">new game</button>
+            <select id="difficulty">
+                <option value="easy">easy</option>
+                <option value="medium">medium</option>
+                <option value="hard">hard</option>
+                <option value="expert">expert</option>
+            </select>
+            <div class="time">time: <span id="timer">00:00</span></div>
         </div>
-        <form oninput="sudoku.updateData()" class="board">
+        <form oninput="updateSudoku()" class="board">
             <div class="row">
                 <input name="cell" type="text" onkeypress="validateInput(event)">
                 <input name="cell" type="text" onkeypress="validateInput(event)">
