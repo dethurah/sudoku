@@ -18,7 +18,7 @@ Start a game on "easy" to get a sudoku with only one cell blank.
 Improvements to be added:
 <ul>
   <li>a big clean up.</li>
-  <li>better variable names.</li>
+  <li>better variable/function names.</li>
   <li>better filenames.</li>
   <li>new feature: option to pause game.</li>
   <li>new feature: auto pause game when viewing highscores.</li>
