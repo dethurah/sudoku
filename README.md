@@ -25,5 +25,6 @@ To do list of improvements:
   <li>new feature: auto pause game when viewing highscores.</li>
   <li>better html and cleaner css code.</li>
   <li>Instead of displaying different div's in index.html, maybe send html-content to a single content div.</li>
+  <li>Maybe split code into more modules to be loaded in app.js</li>
   <li>Make app compatible with other browsers.</li>
 </ul>
