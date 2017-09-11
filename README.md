@@ -27,4 +27,5 @@ To do list of improvements:
   <li>Instead of displaying different div's in index.html, maybe send html-content to a single content div.</li>
   <li>Maybe split code into more modules to be loaded in app.js</li>
   <li>Make app compatible with other browsers.</li>
+  <li>Add more template sudoku boards in boards.js to improve diversity of boards.</li>
 </ul>
