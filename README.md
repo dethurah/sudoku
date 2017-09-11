@@ -15,11 +15,12 @@ For testing the result of finishing a sudoku, change line 7 of app.js to:
 
 Start a game on "easy" to get a sudoku with only one cell blank.
 
-Improvements to be added:
+To do list of improvements:
 <ul>
   <li>a big clean up.</li>
   <li>better variable/function names.</li>
   <li>better filenames.</li>
+  <li>new feature: option to input small numbers in cells.</li>
   <li>new feature: option to pause game.</li>
   <li>new feature: auto pause game when viewing highscores.</li>
   <li>better html and css code.</li>
