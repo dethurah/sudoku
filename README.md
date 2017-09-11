@@ -15,10 +15,12 @@ For testing the result of finishing a sudoku, change line 7 of app.js to:
 Start a game on "easy" to get a sudoku with only one cell blank.
 
 Improvements to be added:
-  a big clean up.
-  better variable names.
-  better filenames.
-  new feature: option to pause game.
-  new feature: auto pause game when viewing highscores.
-  better html and css code.
-  Instead of displaying different div's in index.html, maybe send html-content to a single content div.
+<li>
+  <ul>a big clean up.</ul>
+  <ul>better variable names.</ul>
+  <ul>better filenames.</ul>
+  <ul>new feature: option to pause game.</ul>
+  <ul>new feature: auto pause game when viewing highscores.</ul>
+  <ul>better html and css code.</ul>
+  <ul>Instead of displaying different div's in index.html, maybe send html-content to a single content div.</ul>
+</li>
