@@ -23,7 +23,9 @@ For testing the result of finishing a sudoku, change line 7 of app.js to:
 
 <code>var boards = require('./testBoards.js');</code>
 
-Start a game on "easy" to get a sudoku with only one cell blank.
+Then start a game on "easy" to get a sudoku with only one cell blank.
+
+In case you want to erase highscores, you'll have to do it manually in highscores.json.
 
 To do list of improvements:
 <ul>
