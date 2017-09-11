@@ -1,13 +1,23 @@
 # sudoku
 A simple sudoku game. Tested on Chrome.
 
-Install Node.js.
+<h1>Get started</h1>
 
-Install dependencies:
+Install latest <a href="https://nodejs.org/en/">Node</a>.
+
+Download a local copy of the sudoku app.
+
+In terminal, navigate to the app folder and nstall dependencies:
 
 <code>npm install</code>
 
-Run app.js in Node and open localhost:3000 in Chrome.
+Run app.js in Node:
+
+<code>node app.js</code>
+
+Open localhost:3000 in Chrome and enjoy!
+
+<h1>Development</h1>
 
 For testing the result of finishing a sudoku, change line 7 of app.js to:
 
