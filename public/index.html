@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <title>Sudoku</title>
+</head>
+<body onload="document.body.style.opacity='0.8'">
+    <div class="app">
+        <div class="topOfPage">
+        <div class="title">
+                <h1>sudoku</h1>
+        </div>
+        <div class="options">
+            <button class="button" type="button" onclick="newGame()">new game</button>
+            <select id="difficulty" onchange="getHighscores()">
+                <option value="easy">easy</option>
+                <option value="medium">medium</option>
+                <option value="hard">hard</option>
+                <option value="expert">expert</option>
+            </select>
+            <div class="time">time: <span id="timer">00:00</span></div>
+        </div>
+    </div>
+        <div class="highscores">
+            <p id="top10"></p>
+                <ol id="highscoreList">
+                </ol>
+        </div>
+        <div class="submitPage">
+            <p id="completionMessage"></p>
+            <form id="submitHighscore">
+                <input id="inputHighscore" type="text" name="name" placeholder="enter your name"><br>
+                <input id="submitButton" type="submit" value="submit highscore">
+            </form>
+        </div>
+        <div class="sudoku">
+        <form oninput="updateSudoku()" class="board">
+            <div class="row">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+            </div>
+            <div class="row">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+            </div>
+            <div class="row">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+            </div>
+            <div class="row">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+            </div>
+            <div class="row">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+            </div>
+            <div class="row">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+            </div>
+            <div class="row">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+            </div>
+            <div class="row">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+            </div>
+            <div class="row">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+                <input name="cell" type="text" onkeypress="validateInput(event)">
+            </div>
+        </div>
+        <div id="pageBottom">
+            <button class="button" type="button" onclick="toggleSudokuAndHighscores()">highscores</button>
+        </div>
+        </form>
+</div>
+
+    <script type="text/javascript" src="index.js"></script>
+</body>
+</html>
