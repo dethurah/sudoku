@@ -1,0 +1,28 @@
+{
+  "name": "sudoku",
+  "version": "1.0.0",
+  "description": "A simple sudoku game",
+  "dependencies": {
+    "body-parser": "^1.18.0",
+    "express": "^4.15.3",
+    "file-system": "^2.2.2",
+    "multer": "^1.3.0"
+  },
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dethurah/sudoku.git"
+  },
+  "keywords": [
+    "sudoku"
+  ],
+  "author": "Nicolai Wulff",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dethurah/sudoku/issues"
+  },
+  "homepage": "https://github.com/dethurah/sudoku#readme"
+}
