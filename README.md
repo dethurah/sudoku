@@ -19,7 +19,7 @@ To do list of improvements:
 <ul>
   <li>a big clean up.</li>
   <li>better variable/function names.</li>
-  <li>better filenames.</li>
+  <li>better file names.</li>
   <li>new feature: option to input small numbers in cells.</li>
   <li>new feature: option to pause game (and hide sudoku while paused).</li>
   <li>new feature: auto pause game when viewing highscores.</li>
