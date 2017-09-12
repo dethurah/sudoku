@@ -107,6 +107,7 @@ function initForm() {
         let cell = document.getElementsByClassName("cellSmall")[x + (y * 9)];
         for (let i = 0; i <= 8; i++) {
             cell.getElementsByClassName("cellSmallColumn")[i].id = `${x}, ${y}, ${i}`;
+            document.getElementById(`${x}, ${y}, ${i}`).textContent = '';
         }
     });
 }
