@@ -53,6 +53,9 @@ function validateInput(event) {
                 document.getElementById(event.path[0].id).value = '';
             } else {
                 document.getElementById(event.path[0].id).value = key;
+                for (let i = 0; i <= 8; i++) {
+                    document.getElementById(event.path[0].id + ', ' + i).textContent = '';
+                }
             }
             updateSudoku();
         }
@@ -238,12 +241,6 @@ function inputNumber(num, x, y) {
     columns[x][y] = num;
     rows[y][x] = num;
     regions[Math.floor(x / 3)][Math.floor(y / 3)][regionIndex[y][x]] = num;
-    //const regex = /[1-9]/;
-    if(num != '') {
-        for (let i = 0; i <= 8; i++) {
-            document.getElementById(`${x}, ${y}, ${i}`).textContent = '';
-        }
-    }
 }
 
 function eraseNumber(x, y) {
@@ -291,43 +288,41 @@ function checkForSolution(arr) {
 
 function updateSudoku() {
 
-    if(!marksEnabled) {
     
-        forXAndY(8, (x, y) => {
-            inputNumber(parseInt(document.getElementById(`${x}, ${y}`).value), x, y);
-        });
+    forXAndY(8, (x, y) => {
+        inputNumber(parseInt(document.getElementById(`${x}, ${y}`).value), x, y);
+    });
 
-        checkForErrors();
+    checkForErrors();
 
-        if (isSolved()) {
+    if (isSolved()) {
 
-            var formData = new FormData();
-            formData.append("gameID", gameID);
-            formData.append("board", JSON.stringify(rows));
-            fetch("http://localhost:3000/compare", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(response => {
-                if(response) {
-                    stopTimer();
-                    setTitle(`Congratulations!`);
-                    toggleSubmitPage();
+        var formData = new FormData();
+        formData.append("gameID", gameID);
+        formData.append("board", JSON.stringify(rows));
+        fetch("http://localhost:3000/compare", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json())
+        .then(response => {
+            if(response) {
+                stopTimer();
+                setTitle(`Congratulations!`);
+                toggleSubmitPage();
 
-                    const formData = new FormData();
-                    formData.append("gameID", gameID);
-                    fetch("http://localhost:3000/getTime", {
-                        method: "POST",
-                        body: formData
-                    })
-                    .then(response => response.text())
-                    .then(response => document.getElementById("completionMessage").textContent = response);
+                const formData = new FormData();
+                formData.append("gameID", gameID);
+                fetch("http://localhost:3000/getTime", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(response => document.getElementById("completionMessage").textContent = response);
 
-                }
-            })
-            .catch(function() {console.error("Sudoku is completed or doesn't exist")});
-        }
+            }
+        })
+        .catch(function() {console.error("Sudoku is completed or doesn't exist")});
     }
 }
 
