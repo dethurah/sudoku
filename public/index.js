@@ -53,9 +53,26 @@ function validateInput(event) {
                 document.getElementById(event.path[0].id).value = '';
             } else {
                 document.getElementById(event.path[0].id).value = key;
+
+                let x = parseInt(event.path[0].id[0]);
+                let y = parseInt(event.path[0].id[3]);
+
+                let cellIDs = [];
+                for (let i = 0; i <= 2; i++) {
+                    for (let j = 0; j <= 2; j++) {
+                        cellIDs.push(`${Math.floor(x / 3) * 3 + j}, ${Math.floor(y / 3) * 3 + i}`)
+                    }
+                }
+
+                cellIDs.forEach(ID => {document.getElementById(ID + ', ' + (key - 1)).textContent = ''});
+
                 for (let i = 0; i <= 8; i++) {
                     document.getElementById(event.path[0].id + ', ' + i).textContent = '';
+                    document.getElementById(x + ', ' + i + ', ' + (key - 1)).textContent = '';
+                    document.getElementById(i + ', ' + y + ', ' + (key - 1)).textContent = '';
+
                 }
+
             }
             updateSudoku();
         }
@@ -416,5 +433,4 @@ function showSudoku() {
             highscoresStyle.visibility = "hidden";
         }, 1000);
     }
-
 }
