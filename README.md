@@ -29,12 +29,14 @@ In case you want to erase highscores, you'll have to do it manually in highscore
 
 To do list of improvements:
 <ul>
-  <li>a big, thourough clean up.</li>
+  <li>a big, thourough code clean up.</li>
   <li>better variable/function names.</li>
   <li>better file names.</li>
+  <li>new feature: add game history and undo/redo functionality.</li>
+  <li>new feature: navigate board with up/down/left/right arrows.</li>
   <li>new feature: option to pause game (and hide sudoku while paused).</li>
   <li>new feature: auto pause game when viewing highscores.</li>
-  <li>new feature: view personal or global highscores. Disable option to submit highscore to global highscores if game has been paused at any time.
+  <li>new feature: view personal or global highscores. Disable option to submit highscore to global highscores if game has been paused at any time.</li>
   <li>better html and cleaner css code.</li>
   <li>Instead of displaying different div's in index.html, maybe send html-content to a single content div.</li>
   <li>Maybe split code into more modules to be loaded in app.js</li>
