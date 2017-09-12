@@ -38,6 +38,7 @@ To do list of improvements:
   <li>new feature: auto pause game when viewing highscores.</li>
   <li>new feature: view personal or global highscores. Disable option to submit highscore to global highscores if game has been paused at any time.</li>
   <li>better html and cleaner css code.</li>
+  <li>bug fix: if your press ctrl-Z in a cell with pencil markings, a big number may return in the cell while the markings remain.</li>
   <li>Instead of displaying different div's in index.html, maybe send html-content to a single content div.</li>
   <li>Maybe split code into more modules to be loaded in app.js</li>
   <li>Make app compatible with other browsers.</li>
