@@ -1,14 +1,61 @@
-let rows, columns, regions, timer, gameID;
+let rows, columns, regions, timer, gameID, marksEnabled = false;
 
 initForm();
 getHighscores();
+
+
+document.addEventListener("keydown", (event) => {
+    if (event.keyCode == 32) {
+        toggleMarks();
+    }
+})
+
+document.getElementById("newGame").addEventListener("click", () => {
+    document.getElementById("newGame").blur();
+})
+
+document.getElementById("toggleMarks").addEventListener("click", () => {
+    document.getElementById("toggleMarks").blur();
+})
+
+document.getElementById("highscoresButton").addEventListener("click", () => {
+    document.getElementById("highscoresButton").blur();
+})
+
+document.getElementById("difficulty").addEventListener("input", () => {
+    document.getElementById("difficulty").blur();
+})
 
 // utility functions
 function validateInput(event) {
     const regex = /[1-9]/;
     const key = String.fromCharCode(event.keyCode);
+    
     if (!regex.test(key)) {
         event.preventDefault();
+    } else if (regex.test(key)) {
+
+        if(marksEnabled) {
+
+            let input = String.fromCharCode(event.keyCode);
+            let inputID = event.path[0].id + ', ' + (input - 1);
+
+            if (document.getElementById(inputID).textContent == input) {
+                document.getElementById(inputID).textContent = '';
+            } else if (document.getElementById(event.path[0].id).value == '') {
+                document.getElementById(inputID).textContent = input;
+            }
+
+            event.preventDefault();
+        } else {
+            event.preventDefault();
+            if(document.getElementById(event.path[0].id).value == key) {
+                document.getElementById(event.path[0].id).value = '';
+            } else {
+                document.getElementById(event.path[0].id).value = key;
+            }
+            updateSudoku();
+        }
     }
 }
 
@@ -21,8 +68,10 @@ function forXAndY(length, callback) {
 }
 
 function initForm() {
+
     const cells = document.getElementsByName("cell");
     let i = 0;
+
     forXAndY(8, (x, y) => {
         cells[i].id = `${x}, ${y}`;
         i++;
@@ -32,6 +81,13 @@ function initForm() {
         cell.className = "clue";
         cell.maxLength = 1;
         cell.disabled = true;
+    });
+
+    forXAndY(8, (x, y) => {
+        let cell = document.getElementsByClassName("cellSmall")[x + (y * 9)];
+        for (let i = 0; i <= 8; i++) {
+            cell.getElementsByClassName("cellSmallColumn")[i].id = `${x}, ${y}, ${i}`;
+        }
     });
 }
 
@@ -105,11 +161,11 @@ function makeBlanks() {
 
 function newGame() {
     
+    showSudoku();
     stopTimer();
     initForm();
     setTitle("sudoku");
     document.getElementById("timer").textContent = "00:00";
-    showSudoku();
 
     var formData = new FormData();
     formData.append("difficulty", document.getElementById("difficulty").value);
@@ -125,11 +181,28 @@ function newGame() {
     .then(function() {
         columns = getColumns(rows);
         regions = getRegions(rows);
-        drawSudoku();
-        makeBlanks();
-        beginTimer();
+        document.getElementById("whiteOverlay").style.zIndex = 3;
+        document.getElementById("whiteOverlay").style.opacity = 1;
+        setTimeout(() => {
+            document.getElementById("whiteOverlay").style.opacity = 0;
+            drawSudoku();
+            makeBlanks();
+            beginTimer();
+        }, 200);
+        setTimeout(() => {
+            document.getElementById("whiteOverlay").style.zIndex = -2;
+        }, 400);
     });
- 
+}
+
+function toggleMarks() {
+    if (marksEnabled) {
+        marksEnabled = false;
+        document.getElementById("toggleMarks").style.background = "white";
+    } else if (!marksEnabled && document.getElementsByClassName("submitPage")[0].style.visibility != "visible") {
+        marksEnabled = true;
+        document.getElementById("toggleMarks").style.background = "#93E2FF";
+    }
 }
 
 function timeFormatter(str) {
@@ -165,6 +238,12 @@ function inputNumber(num, x, y) {
     columns[x][y] = num;
     rows[y][x] = num;
     regions[Math.floor(x / 3)][Math.floor(y / 3)][regionIndex[y][x]] = num;
+    //const regex = /[1-9]/;
+    if(num != '') {
+        for (let i = 0; i <= 8; i++) {
+            document.getElementById(`${x}, ${y}, ${i}`).textContent = '';
+        }
+    }
 }
 
 function eraseNumber(x, y) {
@@ -212,121 +291,69 @@ function checkForSolution(arr) {
 
 function updateSudoku() {
 
-    forXAndY(8, (x, y) => {
-        inputNumber(parseInt(document.getElementById(`${x}, ${y}`).value), x, y);
-    });
-
-    checkForErrors();
-
-    if (isSolved()) {
-
-        var formData = new FormData();
-        formData.append("gameID", gameID);
-        formData.append("board", JSON.stringify(rows));
-        fetch("http://localhost:3000/compare", {
-            method: "POST",
-            body: formData
-        })
-        .then(response => response.json())
-        .then(response => {
-            if(response) {
-                stopTimer();
-                showSubmitPage();
-                setTitle(`Congratulations!`);
-            }
-        })
-        .catch(function() {console.error("Sudoku is completed or doesn't exist")});
-    }
-}
-
-function toggleSudokuAndHighscores() {
-   
-    var z = document.getElementsByClassName("highscores")[0];
-    var y = document.getElementsByClassName("sudoku")[0];
-    var x = document.getElementsByClassName("submitPage")[0];
-
-    x.style.display = 'none';
-    if (z.style.display == 'none' || !z.style.display) {
-        y.style.display = 'none';
-        z.style.display = 'flex';
-    } else {
-        z.style.display = 'none';
-        y.style.display = 'flex';
-    }
-}
-
-function showSudoku() {
-    var z = document.getElementsByClassName("highscores")[0];
-    var y = document.getElementsByClassName("sudoku")[0];
-    var x = document.getElementsByClassName("submitPage")[0];
-
-    x.style.display = 'none';
-    z.style.display = 'none';
-    y.style.display = 'flex';
-}
-
-function showSubmitPage() {
-    var z = document.getElementsByClassName("highscores")[0];
-    var y = document.getElementsByClassName("sudoku")[0];
-    var x = document.getElementsByClassName("submitPage")[0];
-
-    x.style.display = 'flex';
-    z.style.display = 'none';
-    y.style.display = 'none';
-
-    const formData = new FormData();
-    formData.append("gameID", gameID);
-    fetch("http://localhost:3000/getTime", {
-        method: "POST",
-        body: formData
-    })
-    .then(response => response.text())
-    .then(response => document.getElementById("completionMessage").textContent = response);
-}
-
-function toggleSubmitHighscore() {
+    if(!marksEnabled) {
     
-    var z = document.getElementsByClassName("highscores")[0];
-    var y = document.getElementsByClassName("sudoku")[0];
-    var x = document.getElementsByClassName("submitPage")[0];
+        forXAndY(8, (x, y) => {
+            inputNumber(parseInt(document.getElementById(`${x}, ${y}`).value), x, y);
+        });
 
-    z.style.display = 'none';
-    if (x.style.display == 'none' || !x.style.display) {
-        y.style.display = 'none';
-        x.style.display = 'flex';
-    } else {
-        x.style.display = 'none';
-        y.style.display = 'flex';
+        checkForErrors();
+
+        if (isSolved()) {
+
+            var formData = new FormData();
+            formData.append("gameID", gameID);
+            formData.append("board", JSON.stringify(rows));
+            fetch("http://localhost:3000/compare", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(response => {
+                if(response) {
+                    stopTimer();
+                    setTitle(`Congratulations!`);
+                    toggleSubmitPage();
+
+                    const formData = new FormData();
+                    formData.append("gameID", gameID);
+                    fetch("http://localhost:3000/getTime", {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(response => response.text())
+                    .then(response => document.getElementById("completionMessage").textContent = response);
+
+                }
+            })
+            .catch(function() {console.error("Sudoku is completed or doesn't exist")});
+        }
     }
-
-    const formData = new FormData();
-    formData.append("gameID", gameID);
-    fetch("http://localhost:3000/getTime", {
-        method: "POST",
-        body: formData
-    })
-    .then(response => response.text())
-    .then(response => document.getElementById("completionMessage").textContent = response);
 }
 
 function getHighscores() {
     
     let list = document.getElementById("highscoreList");
     let top10 = document.getElementById("top10");
-    list.innerHTML = "";
-    top10.textContent = "";
+    document.getElementById("highscorePage").style.opacity = 0;
 
-    fetch(
-        "http://localhost:3000/highscores"
-    )
-    .then(response => response.json())
-    .then(highscores => {
-        let chosenDifficulty = document.getElementById("difficulty").value;
-        top10.textContent = `Top 10 (difficulty: ${chosenDifficulty})`;
-        highscores[chosenDifficulty].forEach(highscore => {
-            list.innerHTML += `<li>${highscore.name}: ${highscore.time}</li>`;
+    setTimeout(() => {
+        document.getElementById("highscorePage").style.opacity = 1;
+        list.innerHTML = "";
+        top10.textContent = "";
+    
+        fetch(
+            "http://localhost:3000/highscores"
+        )
+        .then(response => response.json())
+        .then(highscores => {
+            let chosenDifficulty = document.getElementById("difficulty").value;
+            top10.textContent = `Top 10 (difficulty: ${chosenDifficulty})`;
+            highscores[chosenDifficulty].forEach(highscore => {
+                list.innerHTML += `<li>${highscore.name}: ${highscore.time}</li>`;
+            });
         });
-    });
+    }, 200);
 }
 
 document.getElementById("submitHighscore").addEventListener("submit", e => {
@@ -337,6 +364,62 @@ document.getElementById("submitHighscore").addEventListener("submit", e => {
         method: "POST",
         body: formData
     })
-        .then(getHighscores());
-    showSudoku();
+        .then(getHighscores())
+        .then(showSudoku());
 });
+
+function toggleHighscores() {
+    
+    let highscoresStyle = document.getElementsByClassName("highscores")[0].style;
+
+    if(highscoresStyle.visibility == "hidden" || !highscoresStyle.visibility) {
+        highscoresStyle.visibility = "visible";
+        highscoresStyle.zIndex = 3;
+        highscoresStyle.opacity = 1;
+        document.getElementById("highscoresButton").style.background = "#93E2FF";
+    } else {
+        highscoresStyle.opacity = 0;
+        setTimeout(() => {
+            highscoresStyle.zIndex = 0;
+            highscoresStyle.visibility = "hidden";
+        }, 1000);
+
+        document.getElementById("highscoresButton").style.background = "white";
+    }
+}
+
+function toggleSubmitPage() {
+    
+    let submitStyle = document.getElementsByClassName("submitPage")[0].style;
+
+    if(submitStyle.visibility == "hidden" || !submitStyle.visibility) {
+        submitStyle.visibility = "visible";
+        submitStyle.zIndex = 3;
+        submitStyle.opacity = 1;
+    } else {
+        submitStyle.opacity = 0;
+        setTimeout(() => {
+            submitStyle.zIndex = 0;
+            submitStyle.visibility = "hidden";
+        }, 1000);
+    }
+}
+
+function showSudoku() {
+
+    let highscoresStyle = document.getElementsByClassName("highscores")[0].style;
+    let submitStyle = document.getElementsByClassName("submitPage")[0].style;
+
+    if(highscoresStyle.visibility == "visible" || submitStyle.visibility == "visible") {
+        highscoresStyle.opacity = 0;
+        submitStyle.opacity = 0;
+        document.getElementById("highscoresButton").style.background = "white";
+        setTimeout(() => {
+            submitStyle.zIndex = 0;
+            submitStyle.visibility = "hidden";
+            highscoresStyle.zIndex = 0;
+            highscoresStyle.visibility = "hidden";
+        }, 1000);
+    }
+
+}
