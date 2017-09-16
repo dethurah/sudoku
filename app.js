@@ -37,7 +37,7 @@ app.get('/highscores', function(req, res){
 var ID = 0;
 var games = {};
 
-app.post('/getBoard', upload.array(), function(req, res){
+app.post('/getGame', upload.array(), function(req, res){
   let difficulty = req.body.difficulty;
   let boardsClone = JSON.parse(JSON.stringify(boards));
   let board = getBoard(boardsClone[difficulty]);
@@ -52,7 +52,7 @@ app.post('/getBoard', upload.array(), function(req, res){
     ID++;
   }
 
-  res.send([gameID, board]);
+  res.send({"board": board, "ID": gameID});
 })
 
 function forXAndY(length, callback) {
@@ -63,10 +63,13 @@ function forXAndY(length, callback) {
   }
 }
 
-app.post('/compare', upload.array(), function(req, res){
+app.post('/validateAndSubmit', upload.array(), function(req, res){
   
   let thisGameID = req.body.gameID;
   let thisBoard = JSON.parse(req.body.board);
+  let yourName = req.body.name;
+  console.log(thisGameID);
+  console.log(thisBoard);
 
   function compare() {
     
@@ -80,53 +83,49 @@ app.post('/compare', upload.array(), function(req, res){
     return equal;
   }
 
-  let result = compare();
+  if (compare()) {
 
-  if (result && games[thisGameID].time == '') {
-    let diff = new Date(new Date() - games[thisGameID].startTime);
-
-    function timeFormatter(str) {
-      return str.length < 2 ? `0${str}` : str;
+    highscores[games[thisGameID].difficulty].push({
+      "name": yourName, "time": games[thisGameID].time, "timeAsDate": games[thisGameID].timeAsDate
+    })
+  
+    highscores[games[thisGameID].difficulty].sort((a, b) => {return a.timeAsDate - b.timeAsDate});
+   
+    if (highscores[games[thisGameID].difficulty].length > 10) {
+      highscores[games[thisGameID].difficulty].length = 10;
     }
-
-    let m = timeFormatter(`${diff.getMinutes()}`);
-    let s = timeFormatter(`${diff.getSeconds()}`);
-    let elapsedTime = `${m}:${s}`
-
-    games[thisGameID].time = elapsedTime;
-    games[thisGameID].timeAsDate = diff.getSeconds();
+  
+    delete games[thisGameID];
+  
+    fs.writeFile(highscoresFile, JSON.stringify(highscores, null, 2), function (err) {
+      if (err) return console.log(err);
+    })
   }
-
-  res.send(result);
-})
+  
+  //res.send(compare());
+});
 
 app.post('/getTime', upload.array(), function(req, res) {
+  
   let yourGameID = req.body.gameID;
-  let yourTime = games[yourGameID].time;
-  res.send(`You completed the sudoku in ${yourTime}!`)
+
+  let diff = new Date(new Date() - games[yourGameID].startTime);
+  
+      function timeFormatter(str) {
+        return str.length < 2 ? `0${str}` : str;
+      }
+  
+      let m = timeFormatter(`${diff.getMinutes()}`);
+      let s = timeFormatter(`${diff.getSeconds()}`);
+      let elapsedTime = `${m}:${s}`
+  
+      games[yourGameID].time = elapsedTime;
+      games[yourGameID].timeAsDate = diff.getSeconds();
+
+      let yourTime = games[yourGameID].time;
+
+  res.send(`${yourTime}`)
 })
-
-app.post('/submitHighscore', upload.array(), function(req, res){
-
-  var yourName = req.body.name;
-  var yourGameID = req.body.gameID;
-
-  highscores[games[yourGameID].difficulty].push({
-    "name": yourName, "time": games[yourGameID].time, "timeAsDate": games[yourGameID].timeAsDate
-  })
-
-  highscores[games[yourGameID].difficulty].sort((a, b) => {return a.timeAsDate - b.timeAsDate});
- 
-  if (highscores[games[yourGameID].difficulty].length > 10) {
-    highscores[games[yourGameID].difficulty].length = 10;
-  }
-
-  delete games[yourGameID];
-
-  fs.writeFile(highscoresFile, JSON.stringify(highscores, null, 2), function (err) {
-    if (err) return console.log(err);
-  })
-});
 
 app.listen(3000, function(){
   console.log('Server started on port 3000...')
