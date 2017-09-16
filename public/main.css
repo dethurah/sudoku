@@ -16,7 +16,7 @@ body {
 
 .highscores, .boardBG {
     display: flex;
-    visibility: hidden;
+    visibility: visible;
     position: relative;
     flex-direction: column;
     width: 386px;
@@ -30,7 +30,7 @@ body {
 
 .highscores {
     opacity: 0;
-    transition: opacity 1s ease-in;
+    transition: opacity 0.5s ease-in;
 }
 
 .boardBG {
@@ -81,14 +81,15 @@ body {
     align-self: center;
     align-items: center;
     justify-content: center;
-    z-index: -1;
-    visibility: hidden;
+    z-index: 0;
+    visibility: visible;
     opacity: 0;
-    transition: opacity 1s ease-in;
+    transition: opacity 0.5s ease-in;
 }
 
 .sudoku {
     display: flex;
+    visibility: visible;
     position: relative;
     bottom: 1164px;
     margin-bottom: -1940px;
@@ -225,7 +226,7 @@ select {
     color: transparent; 
 }
 
-#inputHighscore {
+#inputName {
     border: none;
     border-bottom: 1px solid grey;
     font-family: sans-serif;
@@ -235,9 +236,14 @@ select {
     outline: none;
 }
 
-#pageBottom {
+.pageBottom {
     padding-top: 10px;
     position: relative;
+}
+
+#undo, #redo {
+    width: 40px;
+    color: #ACACAC;
 }
 
 .board > .row:nth-child(9n) > input {
