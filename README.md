@@ -29,10 +29,9 @@ In case you want to erase highscores, you'll have to do it manually in highscore
 
 To do list of improvements:
 <ul>
-  <li>a big, thourough code clean up.</li>
+  <li>still needs refactoring and clean up.</li>
   <li>better variable/function names.</li>
   <li>better file names.</li>
-  <li>new feature: add game history and undo/redo functionality.</li>
   <li>new feature: navigate board with up/down/left/right arrows.</li>
   <li>new feature: option to pause game (and hide sudoku while paused).</li>
   <li>new feature: auto pause game when viewing highscores.</li>
