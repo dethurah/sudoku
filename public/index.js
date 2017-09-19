@@ -244,10 +244,10 @@ document.getElementsByClassName("board")[0].addEventListener("keydown", (event) 
     let x = parseInt(event.path[0].id[0]);
     let y = parseInt(event.path[0].id[3]);
 
-    if (event.keyCode == 39) {document.getElementById(`${(x + 1) > 8 ? 8 : (x + 1)}, ${y}`).focus();}
-    else if (event.keyCode == 40) {document.getElementById(`${x}, ${(y + 1) > 8 ? 8 : (y + 1)}`).focus();}
-    else if (event.keyCode == 37) {document.getElementById(`${(x - 1) < 0 ? 0 : (x - 1)}, ${y}`).focus();}
-    else if (event.keyCode == 38) {document.getElementById(`${x}, ${(y - 1) < 0 ? 0 : (y - 1)}`).focus();};
+    if (event.keyCode == 39) {document.getElementById(`${(x + 1) > 8 ? 0 : (x + 1)}, ${y}`).focus();}
+    else if (event.keyCode == 40) {document.getElementById(`${x}, ${(y + 1) > 8 ? 0 : (y + 1)}`).focus();}
+    else if (event.keyCode == 37) {document.getElementById(`${(x - 1) < 0 ? 8 : (x - 1)}, ${y}`).focus();}
+    else if (event.keyCode == 38) {document.getElementById(`${x}, ${(y - 1) < 0 ? 8 : (y - 1)}`).focus();};
 });
 
 function checkForErrors() {
