@@ -4,7 +4,7 @@ var path = require('path');
 var multer = require('multer');
 var fs = require('fs');
 
-var boards = require('./boards.js');
+var boards = require('./testBoards.js');
 var getBoard = require('./shuffler.js')
 
 var app = express();
@@ -44,7 +44,7 @@ app.post('/getGame', upload.array(), function(req, res){
   let startTime = new Date();
 
   let gameID = "ID" + ID;
-  games[gameID] = {"difficulty": difficulty, "board": board, "startTime": startTime, "time": '', "timeAsDate": null};
+  games[gameID] = {"difficulty": difficulty, "board": board, "startTime": startTime, "time": '', "timeInSeconds": null};
   
   if (ID >= 1000) {
     ID = 0;
@@ -68,12 +68,15 @@ app.post('/validateAndSubmit', upload.array(), function(req, res){
   let thisGameID = req.body.gameID;
   let thisBoard = JSON.parse(req.body.board);
   let yourName = req.body.name;
-  console.log(thisGameID);
-  console.log(thisBoard);
+
+  let thisDate = new Date();
+  let dateString = `${thisDate.getDate()}/${thisDate.getMonth()}/${thisDate.getFullYear()}`;
 
   function compare() {
     
     let equal = true;
+
+    console.log(games[thisGameID].board);
 
     forXAndY(8, (x, y) => {
       if (games[thisGameID].board[x][y] != '' && games[thisGameID].board[x][y] != thisBoard[x][y]) {
@@ -85,24 +88,38 @@ app.post('/validateAndSubmit', upload.array(), function(req, res){
 
   if (compare()) {
 
+    pushHighscore();
+    sortHighscores();
+    deleteGame();
+    writeHighscoresFile();
+    
+  }
+
+  function pushHighscore() {
     highscores[games[thisGameID].difficulty].push({
-      "name": yourName, "time": games[thisGameID].time, "timeAsDate": games[thisGameID].timeAsDate
+      "name": yourName, "time": games[thisGameID].time, "timeInSeconds": games[thisGameID].timeInSeconds, "dateSubmitted": dateString 
     })
-  
-    highscores[games[thisGameID].difficulty].sort((a, b) => {return a.timeAsDate - b.timeAsDate});
-   
-    if (highscores[games[thisGameID].difficulty].length > 10) {
-      highscores[games[thisGameID].difficulty].length = 10;
-    }
-  
+  }
+
+  function sortHighscores() {
+    highscores[games[thisGameID].difficulty].sort((a, b) => {return a.timeInSeconds - b.timeInSeconds});
+    
+     if (highscores[games[thisGameID].difficulty].length > 10) {
+       highscores[games[thisGameID].difficulty].length = 10;
+     }
+  }
+
+  function deleteGame() {
     delete games[thisGameID];
-  
+  }
+
+  function writeHighscoresFile() {
     fs.writeFile(highscoresFile, JSON.stringify(highscores, null, 2), function (err) {
       if (err) return console.log(err);
     })
   }
-  
-  //res.send(compare());
+
+  res.send("submitted!");
 });
 
 app.post('/getTime', upload.array(), function(req, res) {
@@ -110,21 +127,22 @@ app.post('/getTime', upload.array(), function(req, res) {
   let yourGameID = req.body.gameID;
 
   let diff = new Date(new Date() - games[yourGameID].startTime);
+  diff.setSeconds(diff.getSeconds() - 1);
   
-      function timeFormatter(str) {
-        return str.length < 2 ? `0${str}` : str;
-      }
-  
-      let m = timeFormatter(`${diff.getMinutes()}`);
-      let s = timeFormatter(`${diff.getSeconds()}`);
-      let elapsedTime = `${m}:${s}`
-  
-      games[yourGameID].time = elapsedTime;
-      games[yourGameID].timeAsDate = diff.getSeconds();
+  function timeFormatter(str) {
+    return str.length < 2 ? `0${str}` : str;
+  }
 
-      let yourTime = games[yourGameID].time;
+  let m = timeFormatter(`${diff.getMinutes()}`);
+  let s = timeFormatter(`${diff.getSeconds()}`);
+  let elapsedTime = `${m}:${s}`
 
-  res.send(`${yourTime}`)
+  games[yourGameID].time = elapsedTime;
+  games[yourGameID].timeInSeconds = diff.getSeconds();
+
+  //let yourTime = games[yourGameID].time;
+
+  res.send(`${elapsedTime}`)
 })
 
 app.listen(3000, function(){
