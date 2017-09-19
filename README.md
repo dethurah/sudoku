@@ -17,6 +17,21 @@ Run app.js in Node:
 
 Open localhost:3000 in Chrome and enjoy!
 
+<h2>Features</h2>
+
+<ul>
+  <li>Generates unique sudoku puzzles (server-side) on easy, normal, hard and expert difficulty.</li>
+  <li>Detects and shows when you make an error.</li>
+  <li>Cell numbers are color coded: Clues are black, input is blue, errors are red.</li>
+  <li>Displays game timer.</li>
+  <li>Option to input "pencil marks". Enable pencil mark mode with hotkey: space.</li>
+  <li>Erase a number or pencil mark by pressing the same number again.</li>
+  <li>Navigate the sudoku with up/down/left/right-arrows. Navigate outside the borders to end up on opposite side.</li>
+  <li>Option to undo/redo.</li>
+  <li>Option to view highscores and submit your name and time/highscore when a puzzle is completed.</li>
+  <li>When submitting, your board is validated by the server. Time is also calculated server-side.</li>
+</ul>
+
 <h2>Development</h2>
 
 For testing the result of finishing a sudoku, change line 7 of app.js to:
