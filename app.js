@@ -156,6 +156,6 @@ app.post('/getTime', upload.array(), function(req, res) {
   res.send(`${elapsedTime}`)
 })
 
-app.listen(3000, function(){
+app.listen(process.env.PORT || 5000, function(){
   console.log('Server started on port 3000...')
 })
