@@ -26,6 +26,7 @@ Open localhost:3000 in Chrome and enjoy!
   <li>Displays game timer.</li>
   <li>Option to input "pencil marks". Enable pencil mark mode with hotkey: space.</li>
   <li>Erase a number or pencil mark by pressing the same number again.</li>
+  <li>Automatically erases pencil marks that conflict with an inputted number in the same row, column and region.
   <li>Navigate the sudoku with up/down/left/right-arrows. Navigate outside the borders to end up on opposite side.</li>
   <li>Option to undo/redo.</li>
   <li>Option to view highscores and submit your name and time/highscore when a puzzle is completed.</li>
