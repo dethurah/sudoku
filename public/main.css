@@ -284,3 +284,8 @@ select {
     color: transparent;
     text-shadow: 0 0 0 #CE1900;
 }
+
+.clue.error {
+    color: transparent;
+    text-shadow: 0 0 0 #CE1900;
+}
