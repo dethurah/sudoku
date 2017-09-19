@@ -7,9 +7,34 @@ var marksEnabled = false;
 var timer;
 var completed;
 
-initializeForm();
 drawHighscores();
 fadeToContent("sudoku");
+
+//////////////////////// html generation ////////////////////////
+
+forXAndY(8, (x, y) => {
+    
+    if (!document.getElementsByClassName("row")[y]) {
+        document.getElementsByClassName("board")[0].innerHTML += "<div class='row'></div>";
+        document.getElementsByClassName("boardSmall")[0].innerHTML += "<div class='rowSmall'></div>";
+    }
+
+    document.getElementsByClassName("row")[y].innerHTML += `<input name='cell' type='text' id='${x}, ${y}' maxLength='1' disabled>`;
+    document.getElementsByClassName("rowSmall")[y].innerHTML += `<div class='cellSmall' id='${x}, ${y} cellSmall'></div>`;
+
+    for (let i = 0; i <= 2; i++) {
+
+        document.getElementById(`${x}, ${y} cellSmall`).innerHTML += "<div class='cellSmallRow'></div>";
+
+        for (let z = 0; z <= 2; z++) {
+
+            document.getElementById(`${x}, ${y} cellSmall`).getElementsByClassName("cellSmallRow")[i].innerHTML += `<div class='cellSmallColumn' id='${x}, ${y}, ${z + i * 3}'></div>`;
+            
+        }
+
+    }
+
+});
 
 //////////////////////// Sudoku board construction ////////////////////////
 
@@ -60,8 +85,7 @@ regionIndex = [
 function newGame() {
 
     document.getElementById("newGame").blur();
-    document.getElementById("timer").textContent = "00:00";
-    stopTimer();
+    document.getElementById("newGame").disabled = true;
 
     getGame(difficulty())         // call the server to get a sudoku board of the chosen difficulty and a unique gameID
     .then((game) => {
@@ -79,21 +103,28 @@ function newGame() {
         ];
         gameID = game.ID;
         initializeForm();
+        gameHistory = [];
+        historyState = 0;
+        gameHistory.push(JSON.parse(JSON.stringify(sudoku)));
+        enableUndoRedo();
+        setTitle("sudoku");
         completed = false;
+    })
+    .then(() => {
+
         fadeToContent("sudoku")
         setTimeout(function() {
             drawSudoku();
             makeBlanks();
         }, 200);
         setTimeout(function() {
+            stopTimer();
+            document.getElementById("timer").textContent = "00:00";
             beginTimer();
-        }, 400);
-        gameHistory = [];
-        historyState = 0;
-        gameHistory.push(JSON.parse(JSON.stringify(sudoku)));
-        enableUndoRedo();
-        setTitle("sudoku");
-    });
+            document.getElementById("newGame").disabled = false;
+        }, 1000);
+
+    })
 
 }
 
@@ -293,17 +324,17 @@ function enableUndoRedo() {
 
 function drawHighscores() {
 
-    let highscorelist = document.getElementById("highscoreList");
+    let highscoreTable = document.getElementById("highscoreTable");
     let highscoreHeader = document.getElementById("highscoreHeader");
-    highscorelist.innerHTML = "";
+    highscoreTable.innerHTML = "<tr><th>place</th><th>name</th><th>time</th><th>date submitted</th></tr>";
     highscoreHeader.textContent = "";
 
     getHighscores()
     .then(highscores => {
 
-        highscoreHeader.textContent = `Top 10 (difficulty: ${difficulty()})`;
-        highscores[difficulty()].forEach(highscore => {
-            highscorelist.innerHTML += `<li>${highscore.name}: ${highscore.time}</li>`;
+        highscoreHeader.textContent = `top 10 (difficulty: ${difficulty()})`;
+        highscores[difficulty()].forEach((highscore, i) => {
+            highscoreTable.innerHTML += `<tr><td>${i +1}.</td><td>${highscore.name}</td><td>${highscore.time}</td><td>${highscore.dateSubmitted}</td></tr>`;
         });
 
     });
@@ -453,28 +484,12 @@ function validateAndSubmit() {
 //////////////////////// game initialization ////////////////////////
 
 function initializeForm() {
-    
-    const cells = document.getElementsByName("cell");
-    let i = 0;
 
-    forXAndY(8, (x, y) => {
-        cells[i].id = `${x}, ${y}`;
-        i++;
-    });
-
-    cells.forEach(cell => {
+    document.getElementsByName("cell").forEach(cell => {
         cell.className = "clue";
-        cell.maxLength = 1;
         cell.disabled = true;
     });
 
-    forXAndY(8, (x, y) => {
-        let cell = document.getElementsByClassName("cellSmall")[x + (y * 9)];
-        for (let i = 0; i <= 8; i++) {
-            cell.getElementsByClassName("cellSmallColumn")[i].id = `${x}, ${y}, ${i}`;
-            document.getElementById(`${x}, ${y}, ${i}`).textContent = '';
-        }
-    });
 }
 
 function makeBlanks() {
@@ -493,6 +508,13 @@ function fadeToContent (content) {
     let highscoresStyle = document.getElementsByClassName("highscores")[0].style;
     let sudokuStyle = document.getElementsByClassName("sudoku")[0].style;
     let submitStyle = document.getElementsByClassName("submitPage")[0].style;
+    document.getElementById("newGame").disabled = true;
+    document.getElementById("highscoresButton").disabled = true;
+    setTimeout(function() {
+        document.getElementById("newGame").disabled = false;
+        document.getElementById("highscoresButton").disabled = false;
+    }, 500);
+
 
     if (content == "sudoku") {
 
@@ -518,7 +540,7 @@ function fadeToContent (content) {
                 sudokuStyle.zIndex = 3;
                 submitStyle.zIndex = 0;
 
-            }, 1000);
+            }, 500);
 
         } else {
 
@@ -557,7 +579,7 @@ function fadeToContent (content) {
                 sudokuStyle.zIndex = 0;
                 submitStyle.zIndex = 2;
 
-            }, 1000);
+            }, 500);
 
         } else if (submitStyle.zIndex == 2) {
 
@@ -577,7 +599,7 @@ function fadeToContent (content) {
                 sudokuStyle.zIndex = 3;
                 submitStyle.zIndex = 0;
 
-            }, 1000);
+            }, 500);
 
         }
 
@@ -594,7 +616,7 @@ function fadeToContent (content) {
             setTimeout(function() {
                 highscoresStyle.zIndex = 2;
                 highscoresStyle.opacity = 1;
-            }, 1000);
+            }, 500);
         }
 
     }
