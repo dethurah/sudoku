@@ -2,6 +2,9 @@
   "name": "sudoku",
   "version": "1.0.0",
   "description": "A simple sudoku game",
+  "engines": {
+    "node": "6.11.2"
+  },
   "dependencies": {
     "body-parser": "^1.18.0",
     "express": "^4.15.3",
@@ -14,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dethurah/sudoku.git"
+    "url": "https://github.com/dethurah/sudoku"
   },
   "keywords": [
     "sudoku"
