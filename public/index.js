@@ -475,7 +475,7 @@ function getGame(difficulty) {
     var formData = new FormData();
     formData.append("difficulty", difficulty);
     
-    return fetch("http://localhost:3000/getGame", {
+    return fetch("./getGame", {
         method: "POST",
         body: formData
     })
@@ -485,7 +485,7 @@ function getGame(difficulty) {
 
 function getHighscores() {
 
-    return fetch("http://localhost:3000/highscores")
+    return fetch("./highscores")
     .then(response => response.json());
 
 };
@@ -495,7 +495,7 @@ function getTime() {
     const formData = new FormData();
     formData.append("gameID", gameID);
     
-    return fetch("http://localhost:3000/getTime", {
+    return fetch("./getTime", {
         method: "POST",
         body: formData
     }).then(response => response.text());
@@ -509,7 +509,7 @@ function validateAndSubmit() {
     formData.append("gameID", gameID);
     formData.append("board", JSON.stringify(sudoku.rows));
 
-    fetch("http://localhost:3000/validateAndSubmit", {
+    fetch("./validateAndSubmit", {
         method: "POST",
         body: formData
     });
@@ -520,7 +520,7 @@ function endGame() {
     const formData = new FormData();
     formData.append("gameID", gameID);
 
-    fetch("http://localhost:3000/endGame", {
+    fetch("./endGame", {
         method: "POST",
         body: formData
     });
