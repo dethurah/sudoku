@@ -44,12 +44,14 @@ app.post('/getGame', upload.array(), function(req, res){
   let startTime = new Date();
 
   let gameID = "ID" + ID;
+  ID++;
   games[gameID] = {"difficulty": difficulty, "board": board, "startTime": startTime, "time": '', "timeInSeconds": null};
   
-  if (ID >= 1000) {
-    ID = 0;
-  } else {
-    ID++;
+  while (games[`ID${ID}`]) {
+    ID++
+    if (ID >= 5000) {
+      ID = 0;
+    }
   }
 
   res.send({"board": board, "ID": gameID});
@@ -62,6 +64,15 @@ function forXAndY(length, callback) {
       }
   }
 }
+
+app.post('/endGame', upload.array(), function(req, res) {
+
+  let thisGameID = req.body.gameID;
+
+  delete games[thisGameID];
+
+  res.send("game ended.");
+})
 
 app.post('/validateAndSubmit', upload.array(), function(req, res){
   
