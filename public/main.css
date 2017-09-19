@@ -142,8 +142,14 @@ p, h2 {
     transition: opacity 0.2s ease-in;
 }
 
-#highscoreList {
+#highscoreTable {
     font-size: 15px;
+    text-align: left;
+}
+
+th, td {
+    padding-right: 20px;
+    font-weight: normal;
 }
 
 .title {
@@ -167,6 +173,10 @@ p, h2 {
     font-size: 15px;
     transition: background-color 0.2s ease-in;
     outline: none;
+}
+
+.button[disabled] {
+    color: black;
 }
 
 #submitButton {
@@ -244,6 +254,7 @@ select {
 #undo, #redo {
     width: 40px;
     color: #ACACAC;
+    transition: color 0.5s ease-in;
 }
 
 .board > .row:nth-child(9n) > input {
