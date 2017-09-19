@@ -4,7 +4,7 @@ var path = require('path');
 var multer = require('multer');
 var fs = require('fs');
 
-var boards = require('./testBoards.js');
+var boards = require('./boards.js');
 var getBoard = require('./shuffler.js')
 
 var app = express();
