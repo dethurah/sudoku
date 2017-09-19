@@ -10,6 +10,12 @@ var completed;
 drawHighscores();
 fadeToContent("sudoku");
 
+window.onunload = () => {
+    if (gameID) {
+        endGame();
+    }
+};
+
 //////////////////////// html generation ////////////////////////
 
 forXAndY(8, (x, y) => {
@@ -87,6 +93,9 @@ function newGame() {
     document.getElementById("newGame").blur();
     document.getElementById("newGame").disabled = true;
 
+    if (gameID) {
+        endGame();
+    };
     getGame(difficulty())         // call the server to get a sudoku board of the chosen difficulty and a unique gameID
     .then((game) => {
         setAllValues(game.board)
@@ -413,9 +422,10 @@ function timeFormatter(str) {
 }
 
 function drawTimer(diff) {
+    const h = (diff.getHours() - 1 >= 1 ? `${diff.getHours() - 1}:` : '');
     const m = timeFormatter(`${diff.getMinutes()}`);
     const s = timeFormatter(`${diff.getSeconds()}`);
-    elapsedTime = `${m}:${s}`
+    elapsedTime = `${h}${m}:${s}`
     document.getElementById("timer").textContent = elapsedTime;
 }
 
@@ -424,6 +434,10 @@ function beginTimer() {
     timer = setInterval(() => {
         const diff = new Date(new Date() - startTime);
         drawTimer(diff);
+        if (diff.getHours() == 59) {
+            stopTimer();
+            document.getElementById("timer").textContent = 'still playing?';
+        }
     }, 1000)
 }
 
@@ -476,6 +490,17 @@ function validateAndSubmit() {
     formData.append("board", JSON.stringify(sudoku.rows));
 
     fetch("http://localhost:3000/validateAndSubmit", {
+        method: "POST",
+        body: formData
+    });
+}
+
+function endGame() {
+
+    const formData = new FormData();
+    formData.append("gameID", gameID);
+
+    fetch("http://localhost:3000/endGame", {
         method: "POST",
         body: formData
     });
