@@ -167,9 +167,9 @@ function sudokuInput(event) {       //handles all input in the sudoku board
     const y = parseInt(event.path[0].id[3]);
     const z = key - 1;
 
-    if (regex.test(key) && !event.path[0].classList.contains('clue')) {     
+    if (!event.path[0].classList.contains('clue')) {     
 
-        if (!marksEnabled) {        //handles input of "big" numbers
+        if (!marksEnabled && regex.test(key)) {        //handles input of "big" numbers
 
             if (sudoku.rows[y][x] == key) {
                 
@@ -185,7 +185,7 @@ function sudokuInput(event) {       //handles all input in the sudoku board
 
             checkForErrors();
 
-        } else if (sudoku.rows[y][x] == '') {                    //handles input of "small" numbers (pencil marks)
+        } else if (sudoku.rows[y][x] == '' && regex.test(key)) {       //handles input of "small" numbers (pencil marks)
 
             if (sudoku.marks[x][y][z] == key) {
 
@@ -197,6 +197,11 @@ function sudokuInput(event) {       //handles all input in the sudoku board
 
             }
 
+        } else if (event.keyCode == '8') {
+
+            setValue('', x, y);
+            checkForErrors();
+
         }
 
         gameHistory = gameHistory.slice(0, historyState + 1); //deletes all redo history
@@ -205,7 +210,7 @@ function sudokuInput(event) {       //handles all input in the sudoku board
         drawSudoku();
         enableUndoRedo();
 
-    }
+    };
 
     function eraseMarks() {
 
