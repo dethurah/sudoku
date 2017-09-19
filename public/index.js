@@ -25,7 +25,7 @@ forXAndY(8, (x, y) => {
         document.getElementsByClassName("boardSmall")[0].innerHTML += "<div class='rowSmall'></div>";
     }
 
-    document.getElementsByClassName("row")[y].innerHTML += `<input name='cell' type='text' id='${x}, ${y}' maxLength='1' disabled>`;
+    document.getElementsByClassName("row")[y].innerHTML += `<input name='cell' type='text' id='${x}, ${y}' maxLength='1' autocomplete="off" disabled>`;
     document.getElementsByClassName("rowSmall")[y].innerHTML += `<div class='cellSmall' id='${x}, ${y} cellSmall'></div>`;
 
     for (let i = 0; i <= 2; i++) {
@@ -167,7 +167,7 @@ function sudokuInput(event) {       //handles all input in the sudoku board
     const y = parseInt(event.path[0].id[3]);
     const z = key - 1;
 
-    if (regex.test(key)) {     
+    if (regex.test(key) && !event.path[0].classList.contains('clue')) {     
 
         if (!marksEnabled) {        //handles input of "big" numbers
 
@@ -237,7 +237,18 @@ document.addEventListener("keydown", (event) => {   //toggles marks enabled/disa
     if (event.keyCode == 32) {
         toggleMarks();
     }
-})
+});
+
+document.getElementsByClassName("board")[0].addEventListener("keydown", (event) => {
+    
+    let x = parseInt(event.path[0].id[0]);
+    let y = parseInt(event.path[0].id[3]);
+
+    if (event.keyCode == 39) {document.getElementById(`${(x + 1) > 8 ? 8 : (x + 1)}, ${y}`).focus();}
+    else if (event.keyCode == 40) {document.getElementById(`${x}, ${(y + 1) > 8 ? 8 : (y + 1)}`).focus();}
+    else if (event.keyCode == 37) {document.getElementById(`${(x - 1) < 0 ? 0 : (x - 1)}, ${y}`).focus();}
+    else if (event.keyCode == 38) {document.getElementById(`${x}, ${(y - 1) < 0 ? 0 : (y - 1)}`).focus();};
+});
 
 function checkForErrors() {
     
@@ -251,13 +262,13 @@ function checkForErrors() {
                 sudoku.rows[y].indexOf(value) >= 0 ||
                 sudoku.regions[Math.floor(x / 3)][Math.floor(y / 3)].indexOf(value) >= 0) {
                 setValue(value, x, y);
-                cell.className = "error";
+                cell.className += ' error';
             }
-            else if (cell.disabled) {
-                cell.className = "clue";
+            else if (cell.classList.contains('clue')) {
+                cell.className = 'clue';
             }
-            else {
-                cell.className = "blank";
+            else if (cell.classList.contains('blank')) {
+                cell.className = 'blank';
             }
         }
         setValue(value, x, y);
@@ -441,6 +452,10 @@ function beginTimer() {
     }, 1000)
 }
 
+function pauseTimer() {
+
+}
+
 function stopTimer() {
     if (timer) {
         clearInterval(timer);
@@ -512,7 +527,7 @@ function initializeForm() {
 
     document.getElementsByName("cell").forEach(cell => {
         cell.className = "clue";
-        cell.disabled = true;
+        cell.disabled = false;
     });
 
 }
@@ -520,7 +535,7 @@ function initializeForm() {
 function makeBlanks() {
     forXAndY(8, (x, y) => {
         if (sudoku.rows[y][x] == '') {
-            document.getElementById(`${x}, ${y}`).disabled = false;
+            //document.getElementById(`${x}, ${y}`).disabled = false;
             document.getElementById(`${x}, ${y}`).className = "blank";
         }
     })
