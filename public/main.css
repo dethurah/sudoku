@@ -81,6 +81,7 @@ h1 {
     width: 33.33%;
     max-width: 132px;
     font-size: 15px;
+    cursor: pointer;
 }
 
 #viewHighscores, #pause, #highscoresFade, #pauseFade {
