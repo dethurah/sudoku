@@ -2,91 +2,199 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="main.css">
     <title>Sudoku</title>
 </head>
-<body onload="document.body.style.opacity='0.8'">
-    <div class="app">
-        <div class="topOfPage">
-            <div class="title">
-                    <h1>sudoku</h1>
+<body onload="document.body.style.opacity='0.8'" onresize="alignContent()">
+    <div id="background">
+        <div id="app">
+            <div id="title">
+                <h1>sudoku</h1>
             </div>
-        <div class="options">
-            <button id="newGame" class="button" type="button" onclick="newGame()">new game</button>
-            <select id="difficulty" onchange="changeDifficulty()">
-                <option value="easy">easy</option>
-                <option value="medium">medium</option>
-                <option value="hard">hard</option>
-                <option value="expert">expert</option>
-            </select>
-            <div class="time">time: <span id="timer">00:00</span></div>
-        </div>
-        </div>
-        <div class="highscores">
-            <div id="highscorePage">
-                <p id="highscoreHeader"></p>
-                <table id="highscoreTable">
-                    <tr>
-                        <th>Place</th>
-                        <th>Name</th>
-                        <th>Time</th>
-                        <th>Date submitted</th>
-                    </tr>
-                </table>
+            <div id="topNav">
+                <div class="button" id="newGame" onclick="newGame()"><span>new game</span><div class="vrL"></div><div class="vrR"></div></div>
+                <div class="button" id="difficulty"><span>difficulty</span><div class="vrL"></div><div class="vrR"></div></div>
+                <div class="button"><span id="timer">00:00</span></div>
             </div>
-        </div>
-        <div class="submitPage">
-            <p id="completionMessage"></p>
-            <form id="submitHighscore">
-                <input id="inputName" type="text" name="name" placeholder="enter your name" maxlength="10"><br>
-                <input id="submitButton" type="submit" value="submit highscore">
-            </form>
-        </div>
-        <div class="boardSmall">
-        </div>
-        <div class="sudoku">
-            <form onkeypress="sudokuInput(event)" class="board">
-            </form>
-        </div>
-        <div class="boardBG">
-            <div class="BGRow">
-                <div class="BGwhite">
+            <div id="content">
+                <div id="sudoku">
+                    <table id="board">
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                        </tr>
+                        <tr>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                        </tr>
+                        <tr>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                            <td class="greyBG"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </table>
                 </div>
-                <div class="BGgrey">
-                </div>
-                <div class="BGwhite">
-                </div>
             </div>
-            <div class="BGRow">
-                    <div class="BGgrey">
-                    </div>
-                    <div class="BGwhite">
-                    </div>
-                    <div class="BGgrey">
+            <div id="numberButtons">
+                <div class="numberButton" onclick="sudokuInput(49)">1<div class="vrL"></div><div class="vrR"></div></div>
+                <div class="numberButton" onclick="sudokuInput(50)">2<div class="vrL"></div><div class="vrR"></div></div>
+                <div class="numberButton" onclick="sudokuInput(51)">3<div class="vrL"></div><div class="vrR"></div></div>
+                <div class="numberButton" onclick="sudokuInput(52)">4<div class="vrL"></div><div class="vrR"></div></div>
+                <div class="numberButton" onclick="sudokuInput(53)">5<div class="vrL"></div><div class="vrR"></div></div>
+                <div class="numberButton" onclick="sudokuInput(54)">6<div class="vrL"></div><div class="vrR"></div></div>
+                <div class="numberButton" onclick="sudokuInput(55)">7<div class="vrL"></div><div class="vrR"></div></div>
+                <div class="numberButton" onclick="sudokuInput(56)">8<div class="vrL"></div><div class="vrR"></div></div>
+                <div class="numberButton" onclick="sudokuInput(57)">9</div>
+            </div>
+            <div id="bottomNav">
+                <div class="button" id="viewHighscores" onclick="toggleHighscores()"><span>top10</span><div class="vrL"></div><div class="vrR"></div></div>
+                <div class="button" id="toggleMarks" onclick="toggleMarks()"><span>pencil marks</span><div class="vrL"></div><div class="vrR"></div></div>
+                <div class="button" id="pause"><span>pause</span><div class="vrL"></div><div class="vrR"></div></div>
+                <div class="button" id="undo" onclick="undo()"><span>↩&#xFE0E;</span><div class="vrL"></div><div class="vrR"></div></div>
+                <div class="button" id="redo" onclick="redo()"><span>↪&#xFE0E;</span></div>
+            </div>
+            <div id="buttonFades">
+                <div class="buttonFade" id="highscoresFade"></div>
+                <div class="buttonFade" id="toggleMarksFade"></div>
+                <div class="buttonFade" id="pauseFade"></div>
+                <div class="buttonFade" id="undoFade"></div>
+                <div class="buttonFade" id="redoFade"></div>
+            </div>
+            <div id="highscores">
+                <div id="highscorePage">
+                        <p id="highscoreHeader"></p>
+                        <table id="highscoreTable">
+                            <tr>
+                                <th>Place</th>
+                                <th>Name</th>
+                                <th>Time</th>
+                                <th>Date submitted</th>
+                            </tr>
+                        </table>
                     </div>
             </div>
-            <div class="BGRow">
-                    <div class="BGwhite">
-                    </div>
-                    <div class="BGgrey">
-                    </div>
-                    <div class="BGwhite">
-                    </div>
+            <div id="submitPage">
+
             </div>
-        </div>
-        <div id="whiteOverlay">
-        </div>
-        <div class="pageBottom">
-            <button class="button" type="button" id="highscoresButton" onclick="fadeToContent('highscores')">highscores</button>
-            <button class="button" type="button" id="toggleMarks" onclick="toggleMarks()" title="hotkey: space">pencil marks</button>
-            <button class="button" type="button" onclick="">pause</button>
-        </div>
-        <div class="pageBottom">
-            <button class="button" type="button" id="undo" onclick="undo()">↩</button>
-            <button class="button" type="button" id="redo" onclick="redo()">↪</button>
         </div>
     </div>
+<script>
+    function alignContent() {
+        function getOffset(x, y, z) {return `${Math.round(document.getElementById("sudoku").offsetWidth) * x + Math.round(document.getElementById("bottomNav").offsetHeight) * y + z}px`;};
 
-    <script type="text/javascript" src="index.js"></script>
+        document.getElementById("highscores").style.bottom = getOffset(1, 3, 0);
+        document.getElementById("submitPage").style.bottom = getOffset(2, 3, 0);
+        document.getElementById("buttonFades").style.bottom = getOffset(0, 1, 0);
+    }
+    alignContent();
+</script>
+<script type="text/javascript" src="index.js"></script>
+  <!--  <script type="text/javascript" src="index.js"></script> 
+
+                <div class="numberButton">1</div>
+                <div class="vrL"></div><div class="vrR"></div>
+                <div class="numberButton">2</div>
+                <div class="vrL"></div><div class="vrR"></div>
+                <div class="numberButton">3</div>
+                <div class="vrL"></div><div class="vrR"></div>
+                <div class="numberButton">4</div>
+                <div class="vrL"></div><div class="vrR"></div>
+                <div class="numberButton">5</div>
+                <div class="vrL"></div><div class="vrR"></div>
+                <div class="numberButton">6</div>
+                <div class="vrL"></div><div class="vrR"></div>
+                <div class="numberButton">7</div>
+                <div class="vrL"></div><div class="vrR"></div>
+                <div class="numberButton">8</div>
+                <div class="vrL"></div><div class="vrR"></div>
+                <div class="numberButton">9</div>
+-->
 </body>
 </html>
