@@ -2,13 +2,15 @@
 
 var sudoku;
 var gameID;
-var difficulty = function() {return document.getElementById("difficulty").value};
+var difficulty = "easy";
 var marksEnabled = false;
 var timer;
 var completed;
+var cellInFocus;
 
 drawHighscores();
-fadeToContent("sudoku");
+initializeForm();
+//fadeToContent("sudoku");
 
 window.onunload = () => {
     if (gameID) {
@@ -17,7 +19,7 @@ window.onunload = () => {
 };
 
 //////////////////////// html generation ////////////////////////
-
+/*
 forXAndY(8, (x, y) => {
     
     if (!document.getElementsByClassName("row")[y]) {
@@ -41,7 +43,7 @@ forXAndY(8, (x, y) => {
     }
 
 });
-
+*/
 //////////////////////// Sudoku board construction ////////////////////////
 
 var sudoku = {
@@ -90,13 +92,13 @@ regionIndex = [
 
 function newGame() {
 
-    document.getElementById("newGame").blur();
-    document.getElementById("newGame").disabled = true;
+    //document.getElementById("newGame").blur();
+    //document.getElementById("newGame").disabled = true;
 
     if (gameID) {
         endGame();
     };
-    getGame(difficulty())         // call the server to get a sudoku board of the chosen difficulty and a unique gameID
+    getGame(difficulty)         // call the server to get a sudoku board of the chosen difficulty and a unique gameID
     .then((game) => {
         setAllValues(game.board)
         sudoku.marks = [
@@ -121,7 +123,7 @@ function newGame() {
     })
     .then(() => {
 
-        fadeToContent("sudoku")
+        //fadeToContent("sudoku")
         setTimeout(function() {
             drawSudoku();
             makeBlanks();
@@ -130,7 +132,7 @@ function newGame() {
             stopTimer();
             document.getElementById("timer").textContent = "00:00";
             beginTimer();
-            document.getElementById("newGame").disabled = false;
+            //document.getElementById("newGame").disabled = false;
         }, 1000);
 
     })
@@ -139,17 +141,15 @@ function newGame() {
 
 function toggleMarks() {
 
-    const marksButton = document.getElementById("toggleMarks");
-
     if (marksEnabled) {
         
         marksEnabled = false;
-        marksButton.style.background = "white";
+        document.getElementById("toggleMarksFade").style.opacity = 0;
 
-    } else if (!marksEnabled && document.getElementsByClassName("submitPage")[0].style.zIndex != 3) {
+    } else if (!marksEnabled && document.getElementById("submitPage").style.zIndex != 3) {
         
         marksEnabled = true;
-        marksButton.style.background = "#93E2FF";
+        document.getElementById("toggleMarksFade").style.opacity = 1;
 
     }
 
@@ -159,15 +159,15 @@ function toggleMarks() {
 
 function sudokuInput(event) {       //handles all input in the sudoku board
 
-    event.preventDefault();
+    //event.preventDefault();
     const regex = /[1-9]/;
-    const key = parseInt(String.fromCharCode(event.keyCode));
+    const key = parseInt(String.fromCharCode(event));
 
-    const x = parseInt(event.path[0].id[0]);
-    const y = parseInt(event.path[0].id[3]);
+    const x = parseInt(cellInFocus.id[0]);
+    const y = parseInt(cellInFocus.id[3]);
     const z = key - 1;
 
-    if (!event.path[0].classList.contains('clue')) {     
+    if (!cellInFocus.classList.contains('clue')) {     
 
         if (!marksEnabled && regex.test(key)) {        //handles input of "big" numbers
 
@@ -178,8 +178,8 @@ function sudokuInput(event) {       //handles all input in the sudoku board
             } else {
 
                 setValue(key, x, y)
-                eraseMarks();
-                checkIfSolved();
+                //eraseMarks();
+                //checkIfSolved();
 
             }
 
@@ -197,7 +197,7 @@ function sudokuInput(event) {       //handles all input in the sudoku board
 
             }
 
-        } else if (event.keyCode == '8') {
+        } else if (event == '8') {
 
             setValue('', x, y);
             checkForErrors();
@@ -239,22 +239,50 @@ function sudokuInput(event) {       //handles all input in the sudoku board
 }
 
 document.addEventListener("keydown", (event) => {   //toggles marks enabled/disabled when pressing "space";
+
+    const regex = /[1-9]/;
+    const key = String.fromCharCode(event.keyCode);
+
     if (event.keyCode == 32) {
+
         toggleMarks();
+
+    } else if (event.keyCode == 39 || event.keyCode == 40 || event.keyCode == 37 || event.keyCode == 38) {
+
+        if (!cellInFocus && gameID) {
+
+            focusCell(document.getElementById("0, 0"));
+
+        } else {
+
+            let x = parseInt(cellInFocus.id[0]);
+            let y = parseInt(cellInFocus.id[3]);
+
+            if (event.keyCode == 39) {focusCell(document.getElementById(`${(x + 1) > 8 ? 0 : (x + 1)}, ${y}`))}
+            else if (event.keyCode == 40) {focusCell(document.getElementById(`${x}, ${(y + 1) > 8 ? 0 : (y + 1)}`))}
+            else if (event.keyCode == 37) {focusCell(document.getElementById(`${(x - 1) < 0 ? 8 : (x - 1)}, ${y}`))}
+            else if (event.keyCode == 38) {focusCell(document.getElementById(`${x}, ${(y - 1) < 0 ? 8 : (y - 1)}`))};
+
+        }
+        
+    } else if (regex.test(key)) {
+
+        sudokuInput(event.keyCode);
+
     }
 });
+/*
+document.getElementById("board").addEventListener("keydown", (event) => {
+    console.log("hej");
+    let x = parseInt(cellInFocus.id[0]);
+    let y = parseInt(cellInFocus.id[3]);
 
-document.getElementsByClassName("board")[0].addEventListener("keydown", (event) => {
-    
-    let x = parseInt(event.path[0].id[0]);
-    let y = parseInt(event.path[0].id[3]);
-
-    if (event.keyCode == 39) {document.getElementById(`${(x + 1) > 8 ? 0 : (x + 1)}, ${y}`).focus();}
-    else if (event.keyCode == 40) {document.getElementById(`${x}, ${(y + 1) > 8 ? 0 : (y + 1)}`).focus();}
-    else if (event.keyCode == 37) {document.getElementById(`${(x - 1) < 0 ? 8 : (x - 1)}, ${y}`).focus();}
-    else if (event.keyCode == 38) {document.getElementById(`${x}, ${(y - 1) < 0 ? 8 : (y - 1)}`).focus();};
+    if (event.keyCode == 39) {focusCell(document.getElementById(`${(x + 1) > 8 ? 0 : (x + 1)}, ${y}`))}
+    else if (event.keyCode == 40) {focusCell(document.getElementById(`${x}, ${(y + 1) > 8 ? 0 : (y + 1)}`))}
+    else if (event.keyCode == 37) {focusCell(document.getElementById(`${(x - 1) < 0 ? 8 : (x - 1)}, ${y}`))}
+    else if (event.keyCode == 38) {focusCell(document.getElementById(`${x}, ${(y - 1) < 0 ? 8 : (y - 1)}`))};
 });
-
+*/
 function checkForErrors() {
     
     forXAndY(8, (x, y) => {
@@ -334,11 +362,11 @@ function enableUndoRedo() {
     if (historyState == gameHistory.length - 1) {
         document.getElementById("redo").style.color = "#ACACAC";
     } else {
-        document.getElementById("redo").style.color = "black";
+        document.getElementById("redo").style.color = "white";
     }
 
     if (historyState > 0) {
-        document.getElementById("undo").style.color = "black";
+        document.getElementById("undo").style.color = "white";
     } else {
         document.getElementById("undo").style.color = "#ACACAC";
     }
@@ -357,8 +385,8 @@ function drawHighscores() {
     getHighscores()
     .then(highscores => {
 
-        highscoreHeader.textContent = `top 10 (difficulty: ${difficulty()})`;
-        highscores[difficulty()].forEach((highscore, i) => {
+        highscoreHeader.textContent = `top 10 (difficulty: ${difficulty})`;
+        highscores[difficulty].forEach((highscore, i) => {
             highscoreTable.innerHTML += `<tr><td>${i +1}.</td><td>${highscore.name}</td><td>${highscore.time}</td><td>${highscore.dateSubmitted}</td></tr>`;
         });
 
@@ -368,7 +396,7 @@ function drawHighscores() {
 
 function toggleHighscores() {
 
-    let highscoresStyle = document.getElementsByClassName("highscores")[0].style;
+    let highscoresStyle = document.getElementById("highscores").style;
     
         if(highscoresStyle.visibility == "hidden" || !highscoresStyle.visibility) {
             highscoresStyle.visibility = "visible";
@@ -401,7 +429,7 @@ function changeDifficulty() {
 
 function viewSubmitPage() {
 
-    let submitPageStyle = document.getElementsByClassName("submitPage")[0].style;
+    let submitPageStyle = document.getElementById("submitPage").style;
 
     if(submitPageStyle.visibility == "hidden" || !submitPageStyle.visibility) {
         submitPageStyle.visibility = "visible";
@@ -423,14 +451,14 @@ function drawCompletionMessage() {
         document.getElementById("completionMessage").textContent = `You completed the Sudoku in ${time}!`;
     })
 }
-
+/*
 document.getElementById("submitHighscore").addEventListener("submit", event => {
     event.preventDefault();
     validateAndSubmit();
     fadeToContent("sudoku");
     drawHighscores();
 });
-
+*/
 //////////////////////// timer ////////////////////////
 
 function timeFormatter(str) {
@@ -530,11 +558,14 @@ function endGame() {
 
 function initializeForm() {
 
-    document.getElementsByName("cell").forEach(cell => {
-        cell.className = "clue";
-        cell.disabled = false;
-    });
-
+    let i = 0;
+    forXAndY(8, (x, y) => {
+        document.getElementsByTagName("td")[i].id = `${x}, ${y}`;
+        document.getElementsByTagName("td")[i].name = 'cell';
+        document.getElementsByTagName("td")[i].classList = "clue";
+        document.getElementsByTagName("td")[i].addEventListener("click", (cell) => {focusCell(cell.target)});
+        i++;
+    })
 }
 
 function makeBlanks() {
@@ -548,11 +579,20 @@ function makeBlanks() {
 
 //////////////////////// CSS manipulators ////////////////////////
 
+function focusCell(cell) {
+    if (!cellInFocus) {cellInFocus = cell;};
+    document.getElementById(cellInFocus.id).style.boxShadow = "none";
+    document.getElementById(cellInFocus.id).style.zIndex = 0;
+    cellInFocus = cell;
+    document.getElementById(cellInFocus.id).style.boxShadow = "0 0 10px #0086B6";
+    document.getElementById(cellInFocus.id).style.zIndex = 1;
+}
+
 function fadeToContent (content) {
 
-    let highscoresStyle = document.getElementsByClassName("highscores")[0].style;
-    let sudokuStyle = document.getElementsByClassName("sudoku")[0].style;
-    let submitStyle = document.getElementsByClassName("submitPage")[0].style;
+    let highscoresStyle = document.getElementById("highscores").style;
+    let sudokuStyle = document.getElementById("sudoku").style;
+    let submitStyle = document.getElementById("submitPage").style;
     document.getElementById("newGame").disabled = true;
     document.getElementById("highscoresButton").disabled = true;
     setTimeout(function() {
@@ -683,9 +723,9 @@ function setTitle(str) {
 
 function drawSudoku() {
     forXAndY(8, (x, y) => {
-        document.getElementById(`${x}, ${y}`).value = sudoku.rows[y][x];
+        document.getElementById(`${x}, ${y}`).textContent = sudoku.rows[y][x];
         for (let z = 0; z <= 8; z++) {
-            document.getElementById(`${x}, ${y}, ${z}`).textContent = sudoku.marks[x][y][z];
+            //document.getElementById(`${x}, ${y}, ${z}`).textContent = sudoku.marks[x][y][z];
         } 
     });
 }
