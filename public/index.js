@@ -12,6 +12,8 @@ drawHighscores();
 initializeForm();
 //fadeToContent("sudoku");
 
+//document.getElementById("newGame").addEventListener("touchstart", newGame());
+
 window.onunload = () => {
     if (gameID) {
         endGame();
@@ -118,7 +120,7 @@ function newGame() {
         historyState = 0;
         gameHistory.push(JSON.parse(JSON.stringify(sudoku)));
         enableUndoRedo();
-        setTitle("sudoku");
+        //setTitle("sudoku");
         completed = false;
     })
     .then(() => {
@@ -321,7 +323,7 @@ function checkIfSolved() {
         !completed
     ) {
         stopTimer();
-        setTitle(`Congratulations!`);
+        //setTitle(`Congratulations!`);
         completed = true;
         drawCompletionMessage();
         fadeToContent("submitPage");
@@ -716,10 +718,10 @@ function forXAndY(length, callback) {       // used to loop through the 8*8 cell
         }
     }
 }
-
+/*
 function setTitle(str) {
     document.getElementsByTagName("h1")[0].textContent = str;
-}
+}*/
 
 function drawSudoku() {
     forXAndY(8, (x, y) => {
