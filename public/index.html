@@ -9,6 +9,9 @@
 <body onload="document.body.style.opacity='0.8'" onresize="alignContent()">
     <div id="background">
         <div id="app">
+            <div id="title">
+                <h1>sudoku</h1>
+            </div>
             <div id="topNav">
                 <div class="button" id="newGame" ontouchstart="newGame()"><span>new game</span><div class="vrL"></div><div class="vrR"></div></div>
                 <div class="button" id="difficulty"><span>difficulty</span><div class="vrL"></div><div class="vrR"></div></div>
@@ -132,7 +135,7 @@
             </div>
             <div id="bottomNav">
                 <div class="button" id="viewHighscores" onclick="toggleHighscores()"><span>top10</span><div class="vrL"></div><div class="vrR"></div></div>
-                <div class="button" id="toggleMarks" ontouchstart="toggleMarks()"><span>pencil marks</span><div class="vrL"></div><div class="vrR"></div></div>
+                <div class="button" id="toggleMarks" onclick="toggleMarks()"><span>pencil marks</span><div class="vrL"></div><div class="vrR"></div></div>
                 <div class="button" id="pause"><span>pause</span><div class="vrL"></div><div class="vrR"></div></div>
                 <div class="button" id="undo" onclick="undo()"><span>↩&#xFE0E;</span><div class="vrL"></div><div class="vrR"></div></div>
                 <div class="button" id="redo" onclick="redo()"><span>↪&#xFE0E;</span></div>
@@ -171,8 +174,12 @@
         document.getElementById("buttonFades").style.bottom = getOffset(0, 1, 0);
     }
     alignContent();
+
+    function newGame() {
+        document.getElementById("newGame").textContent = "test!";
+    }
 </script>
-<script type="text/javascript" src="index.js"></script>
+<!--<script type="text/javascript" src="index.js"></script>-->
   <!--  <script type="text/javascript" src="index.js"></script> 
 
                 <div class="numberButton">1</div>
