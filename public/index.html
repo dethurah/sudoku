@@ -9,11 +9,11 @@
 <body onload="document.body.style.opacity='0.8'" onresize="alignContent()">
     <div id="background">
         <div id="app">
-            <div id="title">
+            <!--<div id="title">
                 <h1>sudoku</h1>
-            </div>
+            </div>-->
             <div id="topNav">
-                <div class="button" id="newGame" ontouchstart="newGame()"><span>new game</span><div class="vrL"></div><div class="vrR"></div></div>
+                <div class="button" id="newGame" onclick="newGame()"><span>new game</span><div class="vrL"></div><div class="vrR"></div></div>
                 <div class="button" id="difficulty"><span>difficulty</span><div class="vrL"></div><div class="vrR"></div></div>
                 <div class="button"><span id="timer">00:00</span></div>
             </div>
@@ -165,40 +165,7 @@
             </div>
         </div>
     </div>
-<script>
-    function alignContent() {
-        function getOffset(x, y, z) {return `${Math.round(document.getElementById("sudoku").offsetWidth) * x + Math.round(document.getElementById("bottomNav").offsetHeight) * y + z}px`;};
-
-        document.getElementById("highscores").style.bottom = getOffset(1, 3, 0);
-        document.getElementById("submitPage").style.bottom = getOffset(2, 3, 0);
-        document.getElementById("buttonFades").style.bottom = getOffset(0, 1, 0);
-    }
-    alignContent();
-
-    function newGame() {
-        document.getElementById("newGame").textContent = "test!";
-    }
-</script>
-<!--<script type="text/javascript" src="index.js"></script>-->
-  <!--  <script type="text/javascript" src="index.js"></script> 
-
-                <div class="numberButton">1</div>
-                <div class="vrL"></div><div class="vrR"></div>
-                <div class="numberButton">2</div>
-                <div class="vrL"></div><div class="vrR"></div>
-                <div class="numberButton">3</div>
-                <div class="vrL"></div><div class="vrR"></div>
-                <div class="numberButton">4</div>
-                <div class="vrL"></div><div class="vrR"></div>
-                <div class="numberButton">5</div>
-                <div class="vrL"></div><div class="vrR"></div>
-                <div class="numberButton">6</div>
-                <div class="vrL"></div><div class="vrR"></div>
-                <div class="numberButton">7</div>
-                <div class="vrL"></div><div class="vrR"></div>
-                <div class="numberButton">8</div>
-                <div class="vrL"></div><div class="vrR"></div>
-                <div class="numberButton">9</div>
--->
+<script src="fetch.js"></script>
+<script type="text/javascript" src="index8.js"></script>
 </body>
 </html>
