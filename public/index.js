@@ -282,6 +282,7 @@ function undo() {
         sudoku = JSON.parse(JSON.stringify(gameHistory[historyState]));
         drawSudoku();
         enableUndoRedo();
+        checkForErrors();
     }
 }
 
@@ -293,6 +294,7 @@ function redo() {
         sudoku = JSON.parse(JSON.stringify(gameHistory[historyState]));
         drawSudoku();
         enableUndoRedo();
+        checkForErrors();
     }
 }
 
